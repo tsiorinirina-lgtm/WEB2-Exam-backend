@@ -10,3 +10,10 @@ CREATE TABLE IF NOT EXISTS users (
   joined_at TIMESTAMP NOT NULL DEFAULT now(),
   role user_role NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS courses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code VARCHAR(20) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  description TEXT
+);
