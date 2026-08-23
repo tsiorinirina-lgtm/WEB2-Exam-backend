@@ -8,3 +8,11 @@ export interface User {
     joined_at: Date;
     role: 'admin' | 'student';
 }
+
+export interface UserCreateInput {
+    mail: string;
+    firstname: string;
+    lastname: string;
+    password_hash: string;
+    role: 'admin' | 'student';
+}
