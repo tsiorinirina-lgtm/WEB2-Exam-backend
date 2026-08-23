@@ -46,3 +46,16 @@ CREATE TABLE IF NOT EXISTS choices (
   CONSTRAINT fk_choices_question
     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS attempts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  submitted_at TIMESTAMP NOT NULL DEFAULT now(),
+  score INT NOT NULL,
+  exam_id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  UNIQUE (exam_id, user_id),
+  CONSTRAINT fk_attempts_exam
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_attempts_user
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT
+);
