@@ -73,3 +73,10 @@ CREATE TABLE IF NOT EXISTS answers (
   CONSTRAINT fk_answers_choice
     FOREIGN KEY (choice_id) REFERENCES choices(id) ON DELETE RESTRICT
 );
+
+CREATE INDEX IF NOT EXISTS idx_exams_course_id ON exams(course_id);
+CREATE INDEX IF NOT EXISTS idx_questions_exam_id ON questions(exam_id);
+CREATE INDEX IF NOT EXISTS idx_choices_question_id ON choices(question_id);
+CREATE INDEX IF NOT EXISTS idx_attempts_user_id ON attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_answers_attempt_id ON answers(attempt_id);
+CREATE INDEX IF NOT EXISTS idx_answers_question_id ON answers(question_id);
