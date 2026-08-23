@@ -1,4 +1,4 @@
-INSERT INTO users (mail, firstname, lastname, password, is_active, role)
+INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'admin@examhub.local',
   'Admin',
@@ -8,7 +8,7 @@ VALUES (
   'admin'
 );
 
-INSERT INTO users (mail, firstname, lastname, password, is_active, role)
+INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'student@examhub.local',
   'Jane',
