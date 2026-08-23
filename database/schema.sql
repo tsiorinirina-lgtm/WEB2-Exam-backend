@@ -59,3 +59,17 @@ CREATE TABLE IF NOT EXISTS attempts (
   CONSTRAINT fk_attempts_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS answers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  attempt_id UUID NOT NULL,
+  question_id UUID NOT NULL,
+  choice_id UUID,
+  UNIQUE (attempt_id, question_id),
+  CONSTRAINT fk_answers_attempt
+    FOREIGN KEY (attempt_id) REFERENCES attempts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_answers_question
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_answers_choice
+    FOREIGN KEY (choice_id) REFERENCES choices(id) ON DELETE RESTRICT
+);
