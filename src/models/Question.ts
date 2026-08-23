@@ -9,3 +9,7 @@ export interface QuestionCreateInput {
     exam_id: string;
     choices: ChoiceCreateInput[];
 }
+
+export interface QuestionUpdateInput {
+    statement?: string;
+}
