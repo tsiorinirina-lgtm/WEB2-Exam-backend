@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS questions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   statement TEXT NOT NULL,
   exam_id UUID NOT NULL,
+  UNIQUE (id, exam_id),
   CONSTRAINT fk_questions_exam
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
 );
@@ -43,6 +44,7 @@ CREATE TABLE IF NOT EXISTS choices (
   label TEXT NOT NULL,
   is_correct BOOLEAN NOT NULL DEFAULT false,
   question_id UUID NOT NULL,
+  UNIQUE (id, question_id),
   CONSTRAINT fk_choices_question
     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
@@ -54,6 +56,7 @@ CREATE TABLE IF NOT EXISTS attempts (
   exam_id UUID NOT NULL,
   user_id UUID NOT NULL,
   UNIQUE (exam_id, user_id),
+  UNIQUE (id, exam_id),
   CONSTRAINT fk_attempts_exam
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE RESTRICT,
   CONSTRAINT fk_attempts_user
@@ -63,15 +66,16 @@ CREATE TABLE IF NOT EXISTS attempts (
 CREATE TABLE IF NOT EXISTS answers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   attempt_id UUID NOT NULL,
+  exam_id UUID NOT NULL,
   question_id UUID NOT NULL,
   choice_id UUID,
   UNIQUE (attempt_id, question_id),
   CONSTRAINT fk_answers_attempt
-    FOREIGN KEY (attempt_id) REFERENCES attempts(id) ON DELETE CASCADE,
+    FOREIGN KEY (attempt_id, exam_id) REFERENCES attempts(id, exam_id) ON DELETE CASCADE,
   CONSTRAINT fk_answers_question
-    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE RESTRICT,
+    FOREIGN KEY (question_id, exam_id) REFERENCES questions(id, exam_id) ON DELETE RESTRICT,
   CONSTRAINT fk_answers_choice
-    FOREIGN KEY (choice_id) REFERENCES choices(id) ON DELETE RESTRICT
+    FOREIGN KEY (choice_id, question_id) REFERENCES choices(id, question_id) ON DELETE RESTRICT
 );
 
 CREATE INDEX IF NOT EXISTS idx_exams_course_id ON exams(course_id);
