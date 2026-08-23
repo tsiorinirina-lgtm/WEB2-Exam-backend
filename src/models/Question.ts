@@ -1,3 +1,5 @@
+import type { ChoiceCreateInput } from './Choice.ts';
+
 export interface Question {
     id: string;
     statement: string;
