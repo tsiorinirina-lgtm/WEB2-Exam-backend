@@ -16,3 +16,11 @@ export interface UserCreateInput {
     password_hash: string;
     role: 'admin' | 'student';
 }
+
+export interface UserUpdateInput {
+    mail?: string;
+    firstname?: string;
+    lastname?: string;
+    is_active?: boolean;
+    role: 'admin' | 'student';
+}
