@@ -4,3 +4,9 @@ export interface Course {
     name: string;
     description: string | null;
 }
+
+export interface CourseCreateInput {
+    code: string;
+    name: string;
+    description?: string;
+}
