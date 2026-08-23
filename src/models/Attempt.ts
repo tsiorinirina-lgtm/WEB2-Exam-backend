@@ -5,3 +5,9 @@ export interface Attempt {
     exam_id: string;
     user_id: string;
 }
+
+export interface AttemptCreateInput {
+    exam_id: string;
+    user_id: string;
+    score: number;
+}
