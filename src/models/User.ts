@@ -22,5 +22,5 @@ export interface UserUpdateInput {
     firstname?: string;
     lastname?: string;
     is_active?: boolean;
-    role: 'admin' | 'student';
+    role?: 'admin' | 'student';
 }
