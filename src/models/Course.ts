@@ -10,3 +10,9 @@ export interface CourseCreateInput {
     name: string;
     description?: string;
 }
+
+export interface CourseUpdateInput {
+    code?: string;
+    name?: string;
+    description?: string;
+}
