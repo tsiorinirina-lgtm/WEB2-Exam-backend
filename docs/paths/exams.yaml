@@ -1,0 +1,255 @@
+examsCollection:
+  get:
+    tags: [Exams]
+    summary: Get exams
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: List of exams
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../openapi.yaml#/components/schemas/Exam"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+  post:
+    tags: [Exams]
+    summary: Create an exam
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../openapi.yaml#/components/schemas/ExamDTO"
+    responses:
+      "201":
+        description: Exam created
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Exam"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "422":
+        description: Invalid Data
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+examsItem:
+  parameters:
+    - in: path
+      required: true
+      name: id
+      description: Exam ID
+      schema:
+        type: string
+        format: uuid
+        example: c970740e-1386-4388-b5b5-15f2689df843
+  get:
+    tags: [Exams]
+    summary: Get an exam
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: Exam found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Exam"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+  put:
+    tags: [Exams]
+    summary: Modify an exam
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../openapi.yaml#/components/schemas/ExamDTO"
+    responses:
+      "200":
+        description: Exam modified successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Exam"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "422":
+        description: Invalid Data
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+  delete:
+    tags: [Exams]
+    summary: Delete an exam
+    security:
+      - bearerAuth: []
+    responses:
+      "204":
+        description: Exam deleted successfully
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "409":
+        description: "Exam has attempts (RG-09)"
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+examQuestionsCollection:
+  parameters:
+    - in: path
+      required: true
+      name: id
+      description: Exam ID
+      schema:
+        type: string
+        format: uuid
+        example: c970740e-1386-4388-b5b5-15f2689df843
+  get:
+    tags: [Questions]
+    summary: Get exam questions
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: List of questions
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../openapi.yaml#/components/schemas/Question"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+  post:
+    tags: [Questions]
+    summary: Create a question
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../openapi.yaml#/components/schemas/QuestionDTO"
+    responses:
+      "201":
+        description: Question created
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Question"
+      "400":
+        description: "Invalid choices (RG-04)"
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+examResultsCollection:
+  parameters:
+    - in: path
+      required: true
+      name: id
+      description: Exam ID
+      schema:
+        type: string
+        format: uuid
+        example: c970740e-1386-4388-b5b5-15f2689df843
+  get:
+    tags: [Results]
+    summary: Get exam results
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: List of results
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "../openapi.yaml#/components/schemas/Result"
+      "401":
+        description: Missing or invalid token
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"
+      "404":
+        description: Exam not found
+        content:
+          application/json:
+            schema:
+              $ref: "../openapi.yaml#/components/schemas/Error"

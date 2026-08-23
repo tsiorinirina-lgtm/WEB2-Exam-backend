@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: Student API
+  version: 1.0.0
+  description: Management of students and exams
+servers:
+  - url: "127.0.0.1:{port}/api"
+    description: Local dev
+    variables:
+      port:
+        default: "3000"
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+    description: Login
+  - name: Students
+  - name: Courses
+  - name: Exams
+  - name: Questions
+  - name: Results
+  - name: Student
+paths:
+  /auth/login:
+    $ref: "./paths/auth/login.yaml#/login"
+  /students:
+    $ref: "./paths/students.yaml#/studentsCollection"
+  /students/{id}:
+    $ref: "./paths/students.yaml#/studentsItem"
+  /courses:
+    $ref: "./paths/courses.yaml#/coursesCollection"
+  /courses/{id}:
+    $ref: "./paths/courses.yaml#/coursesItem"
+  /exams:
+    $ref: "./paths/exams.yaml#/examsCollection"
+  /exams/{id}:
+    $ref: "./paths/exams.yaml#/examsItem"
+  /exams/{id}/questions:
+    $ref: "./paths/exams.yaml#/examQuestionsCollection"
+  /questions/{id}:
+    $ref: "./paths/questions.yaml#/questionsItem"
+  /exams/{id}/results:
+    $ref: "./paths/exams.yaml#/examResultsCollection"
+  /my/exams:
+    $ref: "./paths/my.yaml#/myExamsCollection"
+  /my/exams/{id}:
+    $ref: "./paths/my.yaml#/myExamsItem"
+  /my/exams/{id}/submit:
+    $ref: "./paths/my.yaml#/myExamSubmit"
+  /my/results:
+    $ref: "./paths/my.yaml#/myResultsCollection"
+
+components:
+  schemas:
+    StudentDTO:
+      $ref: "./components/schemas.yaml#/StudentDTO"
+    StudentSummary:
+      $ref: "./components/schemas.yaml#/StudentSummary"
+    CourseDTO:
+      $ref: "./components/schemas.yaml#/CourseDTO"
+    Course:
+      $ref: "./components/schemas.yaml#/Course"
+    ExamDTO:
+      $ref: "./components/schemas.yaml#/ExamDTO"
+    Exam:
+      $ref: "./components/schemas.yaml#/Exam"
+    ChoiceDTO:
+      $ref: "./components/schemas.yaml#/ChoiceDTO"
+    Choice:
+      $ref: "./components/schemas.yaml#/Choice"
+    QuestionDTO:
+      $ref: "./components/schemas.yaml#/QuestionDTO"
+    Question:
+      $ref: "./components/schemas.yaml#/Question"
+    PublicChoice:
+      $ref: "./components/schemas.yaml#/PublicChoice"
+    QuestionPublic:
+      $ref: "./components/schemas.yaml#/QuestionPublic"
+    ExamWithQuestions:
+      $ref: "./components/schemas.yaml#/ExamWithQuestions"
+    SubmissionDTO:
+      $ref: "./components/schemas.yaml#/SubmissionDTO"
+    Result:
+      $ref: "./components/schemas.yaml#/Result"
+    Error:
+      $ref: "./components/schemas.yaml#/Error"
+  securitySchemes:
+    bearerAuth:
+      $ref: "./components/securitySchemes.yaml#/bearerAuth"
