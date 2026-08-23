@@ -3,3 +3,9 @@ export interface Question {
     statement: string;
     exam_id: string;
 }
+
+export interface QuestionCreateInput {
+    statement: string;
+    exam_id: string;
+    choices: ChoiceCreateInput[];
+}
