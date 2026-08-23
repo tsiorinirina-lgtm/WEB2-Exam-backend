@@ -29,3 +29,11 @@ CREATE TABLE IF NOT EXISTS exams (
   CONSTRAINT fk_exams_course
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS questions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  statement TEXT NOT NULL,
+  exam_id UUID NOT NULL,
+  CONSTRAINT fk_questions_exam
+    FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE
+);
