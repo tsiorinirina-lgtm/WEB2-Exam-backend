@@ -1,17 +1,19 @@
-import type { ChoiceCreateInput } from './Choice.ts';
+import type { Choice } from './Choice.ts';
 
 export interface Question {
     id: string;
     statement: string;
     exam_id: string;
+    choices: Choice[];
 }
 
-export interface QuestionCreateInput {
+export interface QuestionCreateDTO {
     statement: string;
     exam_id: string;
-    choices: ChoiceCreateInput[];
+    choices: Choice[];
 }
 
-export interface QuestionUpdateInput {
+export interface QuestionUpdateDTO {
     statement?: string;
+    choices?: Choice[];
 }
