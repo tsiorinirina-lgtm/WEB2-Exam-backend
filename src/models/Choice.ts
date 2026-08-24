@@ -1,17 +1,17 @@
 export interface Choice {
     id: string;
-    label: string;
+    statement: string;
     is_correct: boolean;
     question_id: string;
 }
 
-export interface ChoiceCreateInput {
-    label: string;
+export interface ChoiceCreateDTO {
+    statement: string;
     is_correct: boolean;
     question_id: string;
 }
 
-export interface ChoiceUpdateInput {
-    label?: string;
+export interface ChoiceUpdateDTO {
+    statement?: string;
     is_correct?: boolean;
 }
