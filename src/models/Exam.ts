@@ -7,7 +7,7 @@ export interface Exam {
     course_id: string;
 }
 
-export interface ExamCreateInput {
+export interface ExamCreateDTO {
     title: string;
     description?: string;
     date_hour_start: Date | string;
@@ -15,7 +15,7 @@ export interface ExamCreateInput {
     course_id: string;
 }
 
-export interface ExamUpdateInput {
+export interface ExamUpdateDTO {
     title?: string;
     description?: string;
     date_hour_start?: Date | string;

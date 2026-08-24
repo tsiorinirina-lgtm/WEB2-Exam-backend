@@ -9,7 +9,7 @@ export interface User {
     role: 'admin' | 'student';
 }
 
-export interface UserCreateInput {
+export interface UserCreateDTO {
     mail: string;
     firstname: string;
     lastname: string;
@@ -17,10 +17,9 @@ export interface UserCreateInput {
     role: 'admin' | 'student';
 }
 
-export interface UserUpdateInput {
+export interface UserUpdateDTO {
     mail?: string;
     firstname?: string;
     lastname?: string;
     is_active?: boolean;
-    role: 'admin' | 'student';
 }
