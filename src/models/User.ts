@@ -22,6 +22,7 @@ export interface UserUpdateDTO {
     firstname?: string;
     lastname?: string;
     is_active?: boolean;
+    password_hash?: string;
 }
 
 export interface AuthenticatedUser {
