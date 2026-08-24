@@ -23,3 +23,13 @@ export interface UserUpdateDTO {
     lastname?: string;
     is_active?: boolean;
 }
+
+export interface AuthenticatedUser {
+    id: string;
+    mail: string;
+    firstname: string;
+    lastname: string;
+    is_active: boolean;
+    joined_at: Date;
+    role: 'admin' | 'student';
+}
