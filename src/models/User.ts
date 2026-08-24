@@ -1,3 +1,5 @@
+import { Role } from "./Role.ts";
+
 export interface User {
     id: string;
     mail: string;
@@ -6,7 +8,7 @@ export interface User {
     password_hash: string;
     is_active: boolean;
     joined_at: Date;
-    role: 'admin' | 'student';
+    role: Role;
 }
 
 export interface UserCreateDTO {
@@ -14,7 +16,7 @@ export interface UserCreateDTO {
     firstname: string;
     lastname: string;
     password_hash: string;
-    role: 'admin' | 'student';
+    role: Role;
 }
 
 export interface UserUpdateDTO {
@@ -32,5 +34,5 @@ export interface AuthenticatedUser {
     lastname: string;
     is_active: boolean;
     joined_at: Date;
-    role: 'admin' | 'student';
+    role: Role;
 }
