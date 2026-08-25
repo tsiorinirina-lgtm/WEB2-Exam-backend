@@ -12,7 +12,7 @@ export interface CourseCreateDTO {
 }
 
 export interface CourseUpdateDTO {
-    code?: string;
-    name?: string;
+    code: string;
+    name: string;
     description?: string;
 }
