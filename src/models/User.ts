@@ -27,8 +27,7 @@ export interface UserUpdateDTO {
 export interface AuthenticatedUser {
     id: string;
     mail: string;
-    firstname: string;
-    lastname: string;
+    name: string;
     is_active: boolean;
     created_at: Date;
     role: Role;
@@ -42,4 +41,9 @@ export interface UserCredential {
 export interface JwtPayload {
     userId: number;
     role: Role;
+}
+
+export interface LoginResponseDTO {
+    token: string;
+    user: AuthenticatedUser;
 }
