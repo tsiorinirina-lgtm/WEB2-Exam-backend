@@ -1,7 +1,7 @@
 import { Role } from "./Role.ts";
 
 export interface User {
-    id: string;
+    id: number;
     mail: string;
     firstname: string;
     lastname: string;
