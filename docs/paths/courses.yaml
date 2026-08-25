@@ -1,0 +1,101 @@
+/courses:
+  get:
+    tags: [Courses]
+    summary: Liste des cours
+    responses:
+      "200":
+        description: Cours avec leur nombre d'examens
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: "../components/schemas.yaml#/schemas/Course" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+  post:
+    tags: [Courses]
+    summary: CrÃ©er un cours
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [code, name]
+            properties:
+              code: { type: string, example: PROG2 }
+              name: { type: string, example: Programmation web }
+              description: { type: string, nullable: true }
+    responses:
+      "201":
+        description: Cours crÃ©Ã©
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Course" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "409":
+        description: Code de cours dÃ©jÃ  utilisÃ© ("Course code already in use")
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/courses/{id}:
+  parameters:
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
+  put:
+    tags: [Courses]
+    summary: Modifier un cours
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [code, name]
+            properties:
+              code: { type: string }
+              name: { type: string }
+              description: { type: string, nullable: true }
+    responses:
+      "200":
+        description: Cours mis Ã  jour
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Course" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        description: Code dÃ©jÃ  utilisÃ© par un autre cours
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+  delete:
+    tags: [Courses]
+    summary: Supprimer un cours (refusÃ© s'il possÃ¨de des examens, RG-09)
+    responses:
+      "200":
+        description: Cours supprimÃ©
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        description: Le cours possÃ¨de des examens ("Cannot delete a course that has exams")
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }

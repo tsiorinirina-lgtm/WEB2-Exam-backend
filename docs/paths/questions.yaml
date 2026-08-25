@@ -1,0 +1,33 @@
+/questions/{id}:
+  parameters:
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
+  put:
+    tags: [Questions]
+    summary: Modifier une question (les anciens choix sont remplacÃ©s)
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: "../components/schemas.yaml#/schemas/QuestionInput" }
+    responses:
+      "200":
+        description: Question mise Ã  jour
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Question" }
+      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409": { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }
+  delete:
+    tags: [Questions]
+    summary: Supprimer une question (choix supprimÃ©s en cascade)
+    responses:
+      "200":
+        description: Question supprimÃ©e
+      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409": { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }

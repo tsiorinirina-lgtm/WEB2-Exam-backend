@@ -1,0 +1,139 @@
+schemas:
+  Error:
+    type: object
+    properties:
+      message: { type: string, example: Exam not found }
+
+  Student:
+    type: object
+    properties:
+      id: { type: integer, example: 2 }
+      name: { type: string, example: Jean Rakoto }
+      email: { type: string, format: email, example: jean.rakoto@examhub.local }
+      is_active: { type: boolean, example: true }
+      created_at: { type: string, format: date-time }
+
+  Course:
+    type: object
+    properties:
+      id: { type: integer, example: 1 }
+      code: { type: string, example: PROG2 }
+      name: { type: string, example: Programmation web }
+      description: { type: string, nullable: true }
+      exam_count: { type: integer, example: 1 }
+
+  ExamInput:
+    type: object
+    required: [course_id, title, starts_at, ends_at]
+    properties:
+      course_id: { type: integer, example: 1 }
+      title: { type: string, example: Quiz HTML de base }
+      description: { type: string, nullable: true }
+      starts_at: { type: string, format: date-time }
+      ends_at: { type: string, format: date-time }
+
+  Exam:
+    type: object
+    properties:
+      id: { type: integer, example: 1 }
+      title: { type: string, example: Quiz HTML de base }
+      description: { type: string, nullable: true }
+      starts_at: { type: string, format: date-time }
+      ends_at: { type: string, format: date-time }
+      course:
+        type: object
+        properties:
+          id: { type: integer }
+          code: { type: string }
+          name: { type: string }
+      question_count: { type: integer, example: 2 }
+      attempt_count: { type: integer, example: 0 }
+
+  Choice:
+    type: object
+    properties:
+      id: { type: integer }
+      text: { type: string, example: HyperText Markup Language }
+      is_correct: { type: boolean }
+
+  Question:
+    type: object
+    properties:
+      id: { type: integer }
+      exam_id: { type: integer }
+      statement: { type: string, example: Que signifie HTML ? }
+      points: { type: integer, example: 2 }
+      position: { type: integer, example: 1 }
+      choices:
+        type: array
+        items: { $ref: "#/schemas/Choice" }
+
+  QuestionInput:
+    type: object
+    required: [statement, choices]
+    properties:
+      statement: { type: string }
+      points: { type: integer, default: 1, minimum: 1 }
+      position: { type: integer, default: 1 }
+      choices:
+        type: array
+        minItems: 2
+        maxItems: 6
+        description: Exactement un choix avec is_correct = true
+        items:
+          type: object
+          required: [text, is_correct]
+          properties:
+            text: { type: string }
+            is_correct: { type: boolean }
+
+  MyExam:
+    type: object
+    properties:
+      id: { type: integer }
+      title: { type: string }
+      course:
+        type: object
+        properties:
+          code: { type: string }
+          name: { type: string }
+      description: { type: string, nullable: true }
+      ends_at: { type: string, format: date-time }
+      question_count: { type: integer }
+      total_points: { type: integer }
+
+  MyExamDetail:
+    allOf:
+      - $ref: "#/schemas/MyExam"
+      - type: object
+        properties:
+          questions:
+            type: array
+            description: Sans is_correct (RG-07)
+            items:
+              type: object
+              properties:
+                id: { type: integer }
+                statement: { type: string }
+                points: { type: integer }
+                position: { type: integer }
+                choices:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id: { type: integer }
+                      text: { type: string }
+
+  CorrectionLine:
+    type: object
+    properties:
+      question_id: { type: integer }
+      statement: { type: string }
+      points: { type: integer }
+      student_choice_id:
+        type: integer
+        nullable: true
+        description: null si la question n'a pas été répondue
+      correct_choice_id: { type: integer }
+      is_correct: { type: boolean }

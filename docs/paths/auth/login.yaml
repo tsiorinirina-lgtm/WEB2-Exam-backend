@@ -1,0 +1,39 @@
+/auth/login:
+  post:
+    tags: [Auth]
+    summary: Connexion (admin ou Ã©tudiant)
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [email, password]
+            properties:
+              email:
+                { type: string, format: email, example: admin@examhub.local }
+              password: { type: string, example: admin123 }
+    responses:
+      "200":
+        description: Connexion rÃ©ussie
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: JWT valable 24 h contenant userId et role
+                user:
+                  type: object
+                  properties:
+                    id: { type: integer, example: 1 }
+                    name: { type: string, example: Administrateur }
+                    role: { type: string, enum: [admin, student] }
+      "400": { $ref: "../../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        description: Identifiants invalides ("Invalid email or password") ou compte dÃ©sactivÃ© ("Account disabled")
+        content:
+          application/json:
+            schema: { $ref: "../../components/schemas.yaml#/schemas/Error" }
