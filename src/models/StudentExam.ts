@@ -20,3 +20,7 @@ export interface MyExam {
     question_count: number;
     total_points: number;
 }
+
+export interface MyExamDetail extends MyExam {
+    questions: MyExamQuestion[];
+}
