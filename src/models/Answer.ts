@@ -6,7 +6,7 @@ export interface Answer {
     choice_id: string | null;
 }
 
-export interface AnswerCreateInput {
+export interface AnswerCreateDTO {
     attempt_id: string;
     exam_id: string;
     question_id: string;

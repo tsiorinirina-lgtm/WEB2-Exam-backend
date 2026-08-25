@@ -1,0 +1,50 @@
+export interface StudentChoice {
+    id: number;
+    text: string;
+}
+
+export interface MyExamQuestion {
+    id: number;
+    statement: string;
+    points: number;
+    position: number;
+    choices: StudentChoice[];
+}
+
+export interface MyExam {
+    id: number;
+    title: string;
+    course: { code: string; name: string };
+    description: string | null;
+    ends_at: Date;
+    question_count: number;
+    total_points: number;
+}
+
+export interface MyExamDetail extends MyExam {
+    questions: MyExamQuestion[];
+}
+
+export interface SubmitAnswerInput {
+    question_id: number;
+    choice_id: number;
+}
+
+export interface SubmitExamDTO {
+    answers: SubmitAnswerInput[];
+}
+
+export interface CorrectionLine {
+    question_id: number;
+    statement: string;
+    points: number;
+    student_choice_id: number | null;
+    correct_choice_id: number;
+    is_correct: boolean;
+}
+
+export interface SubmitExamResult {
+    score: number;
+    total_points: number;
+    correction: CorrectionLine[];
+}

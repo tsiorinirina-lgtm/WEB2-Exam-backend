@@ -6,7 +6,7 @@ export interface Attempt {
     user_id: string;
 }
 
-export interface AttemptCreateInput {
+export interface AttemptCreateDTO {
     exam_id: string;
     user_id: string;
     score: number;
