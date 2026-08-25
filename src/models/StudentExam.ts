@@ -24,3 +24,8 @@ export interface MyExam {
 export interface MyExamDetail extends MyExam {
     questions: MyExamQuestion[];
 }
+
+export interface SubmitAnswerInput {
+    question_id: number;
+    choice_id: number;
+}
