@@ -2,7 +2,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'student');
 
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  mail VARCHAR(255) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
   firstname VARCHAR(100) NOT NULL,
   lastname VARCHAR(100) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -22,10 +22,10 @@ CREATE TABLE IF NOT EXISTS exams (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  date_hour_start TIMESTAMP NOT NULL,
-  date_hour_end TIMESTAMP NOT NULL,
+  starts_at TIMESTAMP NOT NULL,
+  ends_at TIMESTAMP NOT NULL,
   course_id UUID NOT NULL,
-  CHECK (date_hour_end > date_hour_start),
+  CHECK (ends_at > starts_at),
   CONSTRAINT fk_exams_course
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT
 );
@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS exams (
 CREATE TABLE IF NOT EXISTS questions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   statement TEXT NOT NULL,
+  points INT NOT NULL DEFAULT 1 CHECK (points >= 1),
+  position INT NOT NULL DEFAULT 1,
   exam_id UUID NOT NULL,
   UNIQUE (id, exam_id),
   CONSTRAINT fk_questions_exam
@@ -41,7 +43,7 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE TABLE IF NOT EXISTS choices (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  label TEXT NOT NULL,
+  text TEXT NOT NULL,
   is_correct BOOLEAN NOT NULL DEFAULT false,
   question_id UUID NOT NULL,
   UNIQUE (id, question_id),
