@@ -42,3 +42,9 @@ export interface CorrectionLine {
     correct_choice_id: number;
     is_correct: boolean;
 }
+
+export interface SubmitExamResult {
+    score: number;
+    total_points: number;
+    correction: CorrectionLine[];
+}
