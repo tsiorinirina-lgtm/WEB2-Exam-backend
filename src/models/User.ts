@@ -33,3 +33,8 @@ export interface AuthenticatedUser {
     created_at: Date;
     role: Role;
 }
+
+export interface UserCredential {
+    email: string;
+    password: string;
+}
