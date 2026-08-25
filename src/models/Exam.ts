@@ -1,24 +1,23 @@
+export interface ExamCourseSummary {
+    id: number;
+    code: string;
+    name: string;
+}
+
 export interface Exam {
-    id: string;
+    id: number;
     title: string;
     description: string | null;
-    date_hour_start: Date;
-    date_hour_end: Date;
-    course_id: string;
+    starts_at: Date;
+    ends_at: Date;
+    course: ExamCourseSummary;
+    question_count: number;
+    attempt_count: number;
 }
-
-export interface ExamCreateDTO {
+export interface ExamInput {
+    course_id: number;
     title: string;
-    description?: string;
-    date_hour_start: Date | string;
-    date_hour_end: Date | string;
-    course_id: string;
-}
-
-export interface ExamUpdateDTO {
-    title?: string;
-    description?: string;
-    date_hour_start?: Date | string;
-    date_hour_end?: Date | string;
-    course_id?: string;
+    description?: string | null;
+    starts_at: Date | string;
+    ends_at: Date | string;
 }
