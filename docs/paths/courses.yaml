@@ -30,7 +30,7 @@
               description: { type: string, nullable: true }
     responses:
       "201":
-        description: Cours cré
+        description: Cours créé
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Course" }
