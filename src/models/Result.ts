@@ -12,3 +12,12 @@ export interface ExamResults {
     attempt_count: number;
     results: ExamResultLine[];
 }
+
+export interface MyResultLine {
+    exam_id: number;
+    title: string;
+    course_code: string;
+    score: number;
+    total_points: number;
+    submitted_at: Date;
+}
