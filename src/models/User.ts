@@ -38,3 +38,8 @@ export interface UserCredential {
     email: string;
     password: string;
 }
+
+export interface JwtPayload {
+    userId: number;
+    role: Role;
+}
