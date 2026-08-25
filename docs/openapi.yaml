@@ -1,89 +1,87 @@
 openapi: 3.0.3
 info:
-  title: Student API
+  title: Exam Hub API
+  description: >
+    API du gestionnaire d'examens QCM Exam Hub. Deux rôles : administrateur
+    (gestion des étudiants, cours, examens, questions et résultats) et
+    étudiant (passage des examens, note calculée côté serveur).
+    Toute erreur renvoie un objet JSON `{ "message": "..." }`.
   version: 1.0.0
-  description: Management of students and exams
 servers:
-  - url: "127.0.0.1:{port}/api"
-    description: Local dev
-    variables:
-      port:
-        default: "3000"
-security:
-  - bearerAuth: []
+  - url: http://localhost:3001/api
+    description: Serveur de développement
+
 tags:
   - name: Auth
-    description: Login
+    description: Connexion (publique)
   - name: Students
+    description: Gestion des étudiants (admin)
   - name: Courses
+    description: Gestion des cours (admin)
   - name: Exams
+    description: Gestion des examens et résultats (admin)
   - name: Questions
-  - name: Results
-  - name: Student
+    description: Questions et choix d'un examen (admin)
+  - name: My
+    description: Espace étudiant (examens disponibles, soumission, résultats)
+
 paths:
   /auth/login:
-    $ref: "./paths/auth/login.yaml#/login"
+    $ref: "./paths/auth/login.yaml#/~1auth~1login"
   /students:
-    $ref: "./paths/students.yaml#/studentsCollection"
+    $ref: "./paths/students.yaml#/~1students"
   /students/{id}:
-    $ref: "./paths/students.yaml#/studentsItem"
+    $ref: "./paths/students.yaml#/~1students~1{id}"
   /courses:
-    $ref: "./paths/courses.yaml#/coursesCollection"
+    $ref: "./paths/courses.yaml#/~1courses"
   /courses/{id}:
-    $ref: "./paths/courses.yaml#/coursesItem"
+    $ref: "./paths/courses.yaml#/~1courses~1{id}"
   /exams:
-    $ref: "./paths/exams.yaml#/examsCollection"
+    $ref: "./paths/exams.yaml#/~1exams"
   /exams/{id}:
-    $ref: "./paths/exams.yaml#/examsItem"
+    $ref: "./paths/exams.yaml#/~1exams~1{id}"
   /exams/{id}/questions:
-    $ref: "./paths/exams.yaml#/examQuestionsCollection"
+    $ref: "./paths/exams.yaml#/~1exams~1{id}~1questions"
   /questions/{id}:
-    $ref: "./paths/questions.yaml#/questionsItem"
+    $ref: "./paths/questions.yaml#/~1questions~1{id}"
   /exams/{id}/results:
-    $ref: "./paths/exams.yaml#/examResultsCollection"
+    $ref: "./paths/exams.yaml#/~1exams~1{id}~1results"
   /my/exams:
-    $ref: "./paths/my.yaml#/myExamsCollection"
+    $ref: "./paths/my.yaml#/~1my~1exams"
   /my/exams/{id}:
-    $ref: "./paths/my.yaml#/myExamsItem"
+    $ref: "./paths/my.yaml#/~1my~1exams~1{id}"
   /my/exams/{id}/submit:
-    $ref: "./paths/my.yaml#/myExamSubmit"
+    $ref: "./paths/my.yaml#/~1my~1exams~1{id}~1submit"
   /my/results:
-    $ref: "./paths/my.yaml#/myResultsCollection"
+    $ref: "./paths/my.yaml#/~1my~1results"
+
+security:
+  - bearerAuth: []
 
 components:
   schemas:
-    StudentDTO:
-      $ref: "./components/schemas.yaml#/StudentDTO"
-    StudentSummary:
-      $ref: "./components/schemas.yaml#/StudentSummary"
-    CourseDTO:
-      $ref: "./components/schemas.yaml#/CourseDTO"
+    Student:
+      $ref: "./components/schemas.yaml#/schemas/Student"
     Course:
-      $ref: "./components/schemas.yaml#/Course"
-    ExamDTO:
-      $ref: "./components/schemas.yaml#/ExamDTO"
+      $ref: "./components/schemas.yaml#/schemas/Course"
     Exam:
-      $ref: "./components/schemas.yaml#/Exam"
-    ChoiceDTO:
-      $ref: "./components/schemas.yaml#/ChoiceDTO"
+      $ref: "./components/schemas.yaml#/schemas/Exam"
     Choice:
-      $ref: "./components/schemas.yaml#/Choice"
-    QuestionDTO:
-      $ref: "./components/schemas.yaml#/QuestionDTO"
+      $ref: "./components/schemas.yaml#/schemas/Choice"
     Question:
-      $ref: "./components/schemas.yaml#/Question"
-    PublicChoice:
-      $ref: "./components/schemas.yaml#/PublicChoice"
-    QuestionPublic:
-      $ref: "./components/schemas.yaml#/QuestionPublic"
-    ExamWithQuestions:
-      $ref: "./components/schemas.yaml#/ExamWithQuestions"
-    SubmissionDTO:
-      $ref: "./components/schemas.yaml#/SubmissionDTO"
-    Result:
-      $ref: "./components/schemas.yaml#/Result"
+      $ref: "./components/schemas.yaml#/schemas/Question"
+    ExamInput:
+      $ref: "./components/schemas.yaml#/schemas/ExamInput"
+    QuestionInput:
+      $ref: "./components/schemas.yaml#/schemas/QuestionInput"
+    MyExam:
+      $ref: "./components/schemas.yaml#/schemas/MyExam"
+    MyExamDetail:
+      $ref: "./components/schemas.yaml#/schemas/MyExamDetail"
+    CorrectionLine:
+      $ref: "./components/schemas.yaml#/schemas/CorrectionLine"
     Error:
-      $ref: "./components/schemas.yaml#/Error"
+      $ref: "./components/schemas.yaml#/schemas/Error"
   securitySchemes:
     bearerAuth:
-      $ref: "./components/securitySchemes.yaml#/bearerAuth"
+      $ref: "./components/securitySchemes.yaml#/securitySchemes/bearerAuth"

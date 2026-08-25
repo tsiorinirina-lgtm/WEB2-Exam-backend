@@ -1,121 +1,101 @@
-coursesCollection:
+/courses:
   get:
     tags: [Courses]
-    summary: Get courses
+    summary: Liste des cours
     responses:
       "200":
-        description: List of courses
+        description: Cours avec leur nombre d'examens
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/Course"
+              items: { $ref: "../components/schemas.yaml#/schemas/Course" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
   post:
     tags: [Courses]
-    summary: Create courses
+    summary: Créer un cours
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "../openapi.yaml#/components/schemas/CourseDTO"
+            type: object
+            required: [code, name]
+            properties:
+              code: { type: string, example: PROG2 }
+              name: { type: string, example: Programmation web }
+              description: { type: string, nullable: true }
     responses:
       "201":
-        description: Courses created
+        description: Cours créé
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Course"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Course" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "409":
+        description: Code de cours déjà utilisé ("Course code already in use")
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid Data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-coursesItem:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/courses/{id}:
   parameters:
-    - in: path
-      required: true
-      name: id
-      description: Course ID
-      schema:
-        type: string
-        format: uuid
-        example: 206df8ac-d732-4f40-9286-2c1fb5fb43e7
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   put:
     tags: [Courses]
-    summary: Modify a course
-    security:
-      - bearerAuth: []
+    summary: Modifier un cours
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: "../openapi.yaml#/components/schemas/CourseDTO"
+            type: object
+            required: [code, name]
+            properties:
+              code: { type: string }
+              name: { type: string }
+              description: { type: string, nullable: true }
     responses:
       "200":
-        description: Course modified successfully
+        description: Cours mis à jour
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Course"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Course" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        description: Code déjà utilisé par un autre cours
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Course not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid Data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
   delete:
     tags: [Courses]
-    summary: Delete a course
-    security:
-      - bearerAuth: []
+    summary: Supprimer un cours (refusé s'il possède des examens, RG-09)
     responses:
-      "204":
-        description: Course deleted successfully
+      "200":
+        description: Cours supprimé
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Course not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: "Course has exams (RG-09)"
+        description: Le cours possède des examens ("Cannot delete a course that has exams")
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
