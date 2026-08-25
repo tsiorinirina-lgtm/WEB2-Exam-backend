@@ -24,7 +24,7 @@
           schema: { $ref: "../components/schemas.yaml#/schemas/ExamInput" }
     responses:
       "201":
-        description: Examen cré
+        description: Examen créé
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Exam" }
@@ -43,7 +43,7 @@
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   get:
     tags: [Exams]
-    summary: Détail d'un examen
+    summary: Détails d'un examen
     responses:
       "200":
         description: L'examen avec cours et compteurs
