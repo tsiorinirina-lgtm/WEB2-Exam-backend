@@ -3,7 +3,7 @@
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   put:
     tags: [Questions]
-    summary: Modifier une question (les anciens choix sont remplacÃ©s)
+    summary: Modifier une question (les anciens choix sont remplacés)
     requestBody:
       required: true
       content:
@@ -11,23 +11,31 @@
           schema: { $ref: "../components/schemas.yaml#/schemas/QuestionInput" }
     responses:
       "200":
-        description: Question mise Ã  jour
+        description: Question mise à jour
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Question" }
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
-      "409": { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }
+      "409":
+        { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }
   delete:
     tags: [Questions]
-    summary: Supprimer une question (choix supprimÃ©s en cascade)
+    summary: Supprimer une question (choix supprimés en cascade)
     responses:
       "200":
-        description: Question supprimÃ©e
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+        description: Question supprimée
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
-      "409": { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }
+      "409":
+        { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }

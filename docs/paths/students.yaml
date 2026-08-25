@@ -1,20 +1,22 @@
 /students:
   get:
     tags: [Students]
-    summary: Liste des Ã©tudiants
+    summary: Liste des étudiants
     responses:
       "200":
-        description: Tous les Ã©tudiants (jamais l'admin, jamais le mot de passe)
+        description: Tous les étudiants (jamais l'admin, jamais le mot de passe)
         content:
           application/json:
             schema:
               type: array
               items: { $ref: "../components/schemas.yaml#/schemas/Student" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
   post:
     tags: [Students]
-    summary: CrÃ©er un Ã©tudiant
+    summary: Créer un étudiant
     requestBody:
       required: true
       content:
@@ -28,19 +30,22 @@
               password:
                 {
                   type: string,
-                  description: Mot de passe initial (hachÃ© en bcrypt cÃ´tÃ© serveur),
+                  description: Mot de passe initial (haché en bcrypt côté serveur),
                 }
     responses:
       "201":
-        description: Ã‰tudiant crÃ©Ã©
+        description: Étudiant cré
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
       "409":
-        description: Email dÃ©jÃ  utilisÃ© ("Email already in use")
+        description: Email déjà utilisé ("Email already in use")
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
@@ -50,7 +55,7 @@
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   put:
     tags: [Students]
-    summary: Modifier un Ã©tudiant (password optionnel = rÃ©initialisation)
+    summary: Modifier un étudiant (password optionnel = réinitialisation)
     requestBody:
       required: true
       content:
@@ -64,32 +69,38 @@
               is_active: { type: boolean }
               password:
                 type: string
-                description: Si prÃ©sent, rÃ©initialise le mot de passe
+                description: Si présent, réinitialise le mot de passe
     responses:
       "200":
-        description: Ã‰tudiant mis Ã  jour
+        description: Étudiant mis à jour
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: Email dÃ©jÃ  utilisÃ© par un autre compte
+        description: Email déjà utilisé par un autre compte
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
   delete:
     tags: [Students]
-    summary: DÃ©sactiver un Ã©tudiant (jamais de suppression physique, RG-10)
+    summary: Désactiver un étudiant (jamais de suppression physique, RG-10)
     responses:
       "200":
-        description: Compte dÃ©sactivÃ© (is_active = false)
+        description: Compte désactivé (is_active = false)
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }

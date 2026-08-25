@@ -14,7 +14,7 @@ parameters:
 
 responses:
   BadRequest:
-    description: DonnÃ©es invalides ou identifiant non numÃ©rique
+    description: Données invalides ou identifiant non numérique
     content:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }
@@ -24,12 +24,12 @@ responses:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }
   ForbiddenAdmin:
-    description: RÃ©servÃ© aux administrateurs ("Admin access required")
+    description: Réservé aux administrateurs ("Admin access required")
     content:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }
   ForbiddenStudent:
-    description: RÃ©servÃ© aux Ã©tudiants ("Student access required")
+    description: Réservé aux étudiants ("Student access required")
     content:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }
@@ -39,7 +39,7 @@ responses:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }
   ConflictLocked:
-    description: L'examen a des tentatives, questions verrouillÃ©es ("Cannot modify questions of an exam that has attempts" â€” RG-08)
+    description: L'examen a des tentatives, questions verrouillées ("Cannot modify questions of an exam that has attempts" — RG-08)
     content:
       application/json:
         schema: { $ref: "./schemas.yaml#/schemas/Error" }

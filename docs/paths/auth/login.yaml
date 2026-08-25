@@ -1,7 +1,7 @@
 /auth/login:
   post:
     tags: [Auth]
-    summary: Connexion (admin ou Ã©tudiant)
+    summary: Connexion (admin ou étudiant)
     security: []
     requestBody:
       required: true
@@ -16,7 +16,7 @@
               password: { type: string, example: admin123 }
     responses:
       "200":
-        description: Connexion rÃ©ussie
+        description: Connexion réussie
         content:
           application/json:
             schema:
@@ -33,7 +33,7 @@
                     role: { type: string, enum: [admin, student] }
       "400": { $ref: "../../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Identifiants invalides ("Invalid email or password") ou compte dÃ©sactivÃ© ("Account disabled")
+        description: Identifiants invalides ("Invalid email or password") ou compte désactivé ("Account disabled")
         content:
           application/json:
             schema: { $ref: "../../components/schemas.yaml#/schemas/Error" }

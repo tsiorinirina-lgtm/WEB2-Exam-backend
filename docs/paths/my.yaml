@@ -1,7 +1,7 @@
 /my/exams:
   get:
     tags: [My]
-    summary: Examens disponibles pour l'Ã©tudiant connectÃ© (fenÃªtre ouverte, non passÃ©s)
+    summary: Examens disponibles pour l'étudiant connecté (fenêtre ouverte, non passés)
     responses:
       "200":
         description: Liste possiblement vide
@@ -10,31 +10,37 @@
             schema:
               type: array
               items: { $ref: "../components/schemas.yaml#/schemas/MyExam" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        {
+          $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent",
+        }
 
 /my/exams/{id}:
   parameters:
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   get:
     tags: [My]
-    summary: DÃ©tail d'un examen Ã  passer (sans is_correct â€” RG-07)
+    summary: Détail d'un examen à passer (sans is_correct — RG-07)
     responses:
       "200":
         description: Examen avec questions et choix (id et texte uniquement)
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/MyExamDetail" }
-      "400": { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
       "403":
-        description: FenÃªtre fermÃ©e ("Exam is not available") ou mauvais rÃ´le
+        description: Fenêtre fermée ("Exam is not available") ou mauvais rôle
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: Examen dÃ©jÃ  passÃ© ("Exam already taken")
+        description: Examen déjà passé ("Exam already taken")
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
@@ -44,11 +50,11 @@
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   post:
     tags: [My]
-    summary: Soumettre ses rÃ©ponses (note calculÃ©e cÃ´tÃ© serveur â€” RG-05/06)
+    summary: Soumettre ses réponses (note calculée côté serveur — RG-05/06)
     description: >
       Les questions absentes du tableau valent 0 point (soumission partielle
-      autorisÃ©e). Chaque question_id doit appartenir Ã  l'examen, chaque
-      choice_id Ã  sa question, sans doublon de question_id.
+      autorisée). Chaque question_id doit appartenir à l'examen, chaque
+      choice_id à sa question, sans doublon de question_id.
     requestBody:
       required: true
       content:
@@ -67,7 +73,7 @@
                     choice_id: { type: integer, example: 3 }
     responses:
       "201":
-        description: Tentative enregistrÃ©e, note et correction complÃ¨te (RG-12)
+        description: Tentative enregistrée, note et correction complète (RG-12)
         content:
           application/json:
             schema:
@@ -77,22 +83,26 @@
                 total_points: { type: integer, example: 5 }
                 correction:
                   type: array
-                  description: Une entrÃ©e par question de l'examen, dans l'ordre
-                  items: { $ref: "../components/schemas.yaml#/schemas/CorrectionLine" }
+                  description: Une entrée par question de l'examen, dans l'ordre
+                  items:
+                    {
+                      $ref: "../components/schemas.yaml#/schemas/CorrectionLine",
+                    }
       "400":
-        description: RÃ©ponses invalides (choix d'une autre question, question d'un autre examen, doublon, tableau manquant)
+        description: Réponses invalides (choix d'une autre question, question d'un autre examen, doublon, tableau manquant)
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
       "403":
-        description: FenÃªtre fermÃ©e ("Exam is not available") ou mauvais rÃ´le
+        description: Fenêtre fermée ("Exam is not available") ou mauvais rôle
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
       "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: DÃ©jÃ  soumis ("Exam already taken" â€” RG-02)
+        description: Déjà soumis ("Exam already taken" — RG-02)
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
@@ -100,10 +110,10 @@
 /my/results:
   get:
     tags: [My]
-    summary: Historique des rÃ©sultats de l'Ã©tudiant connectÃ©
+    summary: Historique des résultats de l'étudiant connecté
     responses:
       "200":
-        description: Tentatives triÃ©es de la plus rÃ©cente Ã  la plus ancienne
+        description: Tentatives triées de la plus récente à la plus ancienne
         content:
           application/json:
             schema:
@@ -117,5 +127,9 @@
                   score: { type: integer }
                   total_points: { type: integer }
                   submitted_at: { type: string, format: date-time }
-      "401": { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
-      "403": { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        {
+          $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent",
+        }

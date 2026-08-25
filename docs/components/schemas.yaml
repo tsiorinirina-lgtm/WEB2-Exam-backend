@@ -109,7 +109,6 @@ schemas:
         properties:
           questions:
             type: array
-            description: Sans is_correct (RG-07)
             items:
               type: object
               properties:
