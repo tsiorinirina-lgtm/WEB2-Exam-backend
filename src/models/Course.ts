@@ -5,14 +5,14 @@ export interface Course {
     description: string | null;
 }
 
-export interface CourseCreateInput {
+export interface CourseCreateDTO {
     code: string;
     name: string;
     description?: string;
 }
 
-export interface CourseUpdateInput {
-    code?: string;
-    name?: string;
+export interface CourseUpdateDTO {
+    code: string;
+    name: string;
     description?: string;
 }

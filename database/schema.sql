@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS answers (
     FOREIGN KEY (choice_id, question_id) REFERENCES choices(id, question_id) ON DELETE RESTRICT
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_choices_one_correct_per_question
+  ON choices(question_id) WHERE is_correct = true;
 CREATE INDEX IF NOT EXISTS idx_exams_course_id ON exams(course_id);
 CREATE INDEX IF NOT EXISTS idx_questions_exam_id ON questions(exam_id);
 CREATE INDEX IF NOT EXISTS idx_choices_question_id ON choices(question_id);

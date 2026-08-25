@@ -1,26 +1,49 @@
+export type Role = 'admin' | 'student';
+
 export interface User {
-    id: string;
-    mail: string;
-    firstname: string;
-    lastname: string;
+    id: number;
+    email: string;
+    name: string;
     password_hash: string;
     is_active: boolean;
     joined_at: Date;
-    role: 'admin' | 'student';
+    role: Role;
 }
 
-export interface UserCreateInput {
-    mail: string;
-    firstname: string;
-    lastname: string;
+export interface UserCreateDTO {
+    email: string;
+    name: string;
     password_hash: string;
-    role: 'admin' | 'student';
+    role: Role;
 }
 
-export interface UserUpdateInput {
-    mail?: string;
-    firstname?: string;
-    lastname?: string;
+export interface UserUpdateDTO {
+    email?: string;
+    name?: string;
     is_active?: boolean;
-    role: 'admin' | 'student';
+    password_hash?: string;
+}
+
+export interface AuthenticatedUser {
+    id: string;
+    mail: string;
+    name: string;
+    is_active: boolean;
+    created_at: Date;
+    role: Role;
+}
+
+export interface UserCredential {
+    email: string;
+    password: string;
+}
+
+export interface JwtPayload {
+    userId: number;
+    role: Role;
+}
+
+export interface LoginResponseDTO {
+    token: string;
+    user: AuthenticatedUser;
 }

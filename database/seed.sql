@@ -1,4 +1,4 @@
-INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
+INSERT INTO users (email, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'admin@examhub.local',
   'Admin',
@@ -8,7 +8,7 @@ VALUES (
   'admin'
 );
 
-INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
+INSERT INTO users (email, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'student@examhub.local',
   'Jane',
@@ -24,7 +24,7 @@ VALUES ('PROG2', 'Programmation 2', 'Introduction to object-oriented programming
 WITH course AS (
   SELECT id FROM courses WHERE code = 'PROG2'
 )
-INSERT INTO exams (title, description, date_hour_start, date_hour_end, course_id)
+INSERT INTO exams (title, description, starts_at, ends_at, course_id)
 SELECT
   'Midterm Quiz',
   'Covers chapters 1 to 4',
@@ -37,16 +37,16 @@ WITH exam AS (
   SELECT id FROM exams WHERE title = 'Midterm Quiz'
 ),
 q1 AS (
-  INSERT INTO questions (statement, exam_id)
-  SELECT 'What does OOP stand for?', exam.id FROM exam
+  INSERT INTO questions (statement, points, position, exam_id)
+  SELECT 'What does OOP stand for?', 1, 1, exam.id FROM exam
   RETURNING id
 ),
 q2 AS (
-  INSERT INTO questions (statement, exam_id)
-  SELECT 'Which keyword is used to inherit a class in Java?', exam.id FROM exam
+  INSERT INTO questions (statement, points, position, exam_id)
+  SELECT 'Which keyword is used to inherit a class in Java?', 1, 2, exam.id FROM exam
   RETURNING id
 )
-INSERT INTO choices (label, is_correct, question_id)
+INSERT INTO choices (text, is_correct, question_id)
 SELECT * FROM (
   VALUES
     ('Object-Oriented Programming', true,  (SELECT id FROM q1)),
@@ -55,4 +55,4 @@ SELECT * FROM (
     ('extends',                     true,  (SELECT id FROM q2)),
     ('implements',                  false, (SELECT id FROM q2)),
     ('inherits',                    false, (SELECT id FROM q2))
-) AS choices_data(label, is_correct, question_id);
+) AS choices_data(text, is_correct, question_id);
