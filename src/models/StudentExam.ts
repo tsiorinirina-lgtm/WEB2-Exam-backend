@@ -33,3 +33,12 @@ export interface SubmitAnswerInput {
 export interface SubmitExamDTO {
     answers: SubmitAnswerInput[];
 }
+
+export interface CorrectionLine {
+    question_id: number;
+    statement: string;
+    points: number;
+    student_choice_id: number | null;
+    correct_choice_id: number;
+    is_correct: boolean;
+}
