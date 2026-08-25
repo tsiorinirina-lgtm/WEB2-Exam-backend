@@ -1,4 +1,4 @@
-import { Role } from "./Role.ts";
+export type Role = 'admin' | 'student';
 
 export interface User {
     id: number;
