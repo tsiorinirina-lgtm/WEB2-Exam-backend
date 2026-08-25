@@ -29,3 +29,7 @@ export interface SubmitAnswerInput {
     question_id: number;
     choice_id: number;
 }
+
+export interface SubmitExamDTO {
+    answers: SubmitAnswerInput[];
+}
