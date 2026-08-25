@@ -43,7 +43,7 @@
     - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   get:
     tags: [Exams]
-    summary: Détails d'un examen
+    summary: Détail d'un examen
     responses:
       "200":
         description: L'examen avec cours et compteurs
@@ -171,7 +171,7 @@
           schema: { $ref: "../components/schemas.yaml#/schemas/QuestionInput" }
     responses:
       "201":
-        description: Question crée avec ses choix
+        description: Question créée avec ses choix
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Question" }

@@ -34,7 +34,7 @@
                 }
     responses:
       "201":
-        description: Étudiant cré
+        description: Étudiant créé
         content:
           application/json:
             schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
