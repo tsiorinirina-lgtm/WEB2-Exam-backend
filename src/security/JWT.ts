@@ -8,3 +8,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "";
 
 export const verifyAccessToken = (token: string): AuthenticatedUser =>
   jwt.verify(token, JWT_SECRET) as AuthenticatedUser;
+
+export const signAccessToken = (user: AuthenticatedUser): string =>
+  jwt.sign(user, JWT_SECRET);
