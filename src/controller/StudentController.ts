@@ -107,3 +107,29 @@ export const updateStudent = (req: Request, res: Response): void => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const deactivateStudent = (req: Request, res: Response): void => {
+    const id = parseId(req.params.id);
+    if (id === null) {
+        throw new BadRequestError('Invalid student ID');
+    }
+    try {
+        const student: User = {
+            id,
+            name: 'John Doe',
+            email: 'john@example.com',
+            password_hash: 'hashed_password_here',
+            is_active: false,
+            joined_at: new Date(),
+            role: 'student'
+        };
+
+        res.status(200).json(student);
+    } catch (error) {
+        if (error instanceof InternalServerError) {
+            res.status(500).json({ message: error.message });
+            return;
+        }
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
