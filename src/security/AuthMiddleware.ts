@@ -27,3 +27,15 @@ export const authenticateUser: RequestHandler = (req, res, next) => {
     return res.send(error);
   }
 };
+
+export const authorizeUser: RequestHandler = (req, res, next) => {
+  if (
+    req.authUser.role !== "admin" ||
+    !req.authUser.is_active ||
+    !req.authUser
+  ) {
+    const error = new UnauthorizedError("Unauthorized");
+    return res.status(error.statusCode).json({ message: error.message });
+  }
+  next();
+};
