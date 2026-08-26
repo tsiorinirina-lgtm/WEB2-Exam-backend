@@ -59,3 +59,51 @@ export const createStudent = (req: Request, res: Response): void => {
     res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+export const updateStudent = (req: Request, res: Response): void => {
+    const id = parseId(req.params.id);
+    if (id === null) {
+        throw new BadRequestError('Invalid student ID');
+    }
+    const { name, email, is_active, password } = req.body;
+    if (!name && !email && is_active === undefined && !password) {
+        throw new BadRequestError('At least one field must be provided for update');
+    }
+    if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            throw new BadRequestError('Invalid email format');
+        }
+    }
+    if (password && password.length < 6) {
+        throw new BadRequestError('Password must be at least 6 characters');
+    }
+    try {
+        const student: User = {
+            id,
+            name: name?.trim() || 'John Doe',
+            email: email?.trim() || 'john@example.com',
+            password_hash: password ? 'hashed_new_password' : 'hashed_password_here',
+            is_active: is_active ?? true,
+            joined_at: new Date(),
+            role: 'student'
+        };
+        res.status(200).json(student);
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            res.status(404).json({ message: error.message });
+            return;
+        }
+        if (error && typeof error === 'object' && 'code' in error) {
+            if (error.code === 'ER_DUP_ENTRY' || error.code === '23505') {
+                res.status(409).json({ message: 'Email already in use by another account' });
+                return;
+            }
+        }
+        if (error instanceof InternalServerError) {
+            res.status(500).json({ message: error.message });
+            return;
+        }
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
