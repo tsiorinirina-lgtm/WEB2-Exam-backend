@@ -133,4 +133,13 @@ export class AuthService {
       role: user.role,
     };
   }
+
+  validate({ email, password }: UserCredential): void {
+    if (!EMAIL_PATTERN.test(email)) {
+      throw new UnauthorizedError("Invalid email");
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new UnauthorizedError("Invalid password");
+    }
+  }
 }
