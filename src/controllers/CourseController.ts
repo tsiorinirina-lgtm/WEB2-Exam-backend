@@ -27,12 +27,6 @@ export class CourseController {
       authorizeUser("admin"),
       (req: Request, res: Response) => this.createCourse(req, res),
     );
-    app.get(
-      "/api/courses/:id",
-      authenticateUser,
-      authorizeUser("admin"),
-      (req: Request, res: Response) => this.getCourseById(req, res),
-    );
     app.put(
       "/api/courses/:id",
       authenticateUser,
@@ -66,23 +60,6 @@ export class CourseController {
       const createdCourse: Course =
         await this.courseService.createCourse(course);
       res.status(201).json(createdCourse);
-    } catch (error) {
-      const responseError =
-        error instanceof HttpError ? error : new InternalServerError();
-      res
-        .status(responseError.statusCode)
-        .json({ message: responseError.message });
-    }
-  }
-
-  private async getCourseById(req: Request, res: Response): Promise<void> {
-    try {
-      const id: number = parseInt(req.params.id as string);
-      if (Number.isNaN(id)) {
-        throw new BadRequestError("Course id must be a number");
-      }
-      const course: Course = await this.courseService.getCourseById(id);
-      res.status(200).json(course);
     } catch (error) {
       const responseError =
         error instanceof HttpError ? error : new InternalServerError();
