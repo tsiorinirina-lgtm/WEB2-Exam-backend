@@ -48,4 +48,37 @@ export class CourseController {
       async (req: Request, res: Response) => this.deleteCourse(req, res),
     );
   }
+
+  private async getAllCourses(req: Request, res: Response) {
+    const courses: Course[] = await this.courseService.getAllCourses();
+    res.status(200).json(courses);
+  }
+
+  private async createCourse(req: Request, res: Response) {
+    const course: Course = req.body;
+    const createdCourse: Course = await this.courseService.createCourse(course);
+    res.status(201).json(createdCourse);
+  }
+
+  private async getCourseById(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id as string);
+    const course: Course = await this.courseService.getCourseById(id);
+    res.status(200).json(course);
+  }
+
+  private async updateCourse(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id as string);
+    const course: Course = req.body;
+    const updatedCourse: Course = await this.courseService.updateCourse(
+      id,
+      course,
+    );
+    res.status(200).json(updatedCourse);
+  }
+
+  private async deleteCourse(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id as string);
+    await this.courseService.deleteCourse(id);
+    res.sendStatus(204);
+  }
 }
