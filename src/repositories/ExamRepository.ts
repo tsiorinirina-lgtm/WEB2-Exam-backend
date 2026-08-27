@@ -171,4 +171,28 @@ export class ExamRepository {
 
         return await this.findById(id);
     }
+
+    async delete(id: number): Promise<boolean> {
+        const checkAttemptsQuery = `
+            SELECT COUNT(*) as attempt_count
+            FROM attempts
+            WHERE exam_id = $1
+        `;
+
+        const checkResult: QueryResult = await this.pool.query(checkAttemptsQuery, [id]);
+        const attemptCount = parseInt(checkResult.rows[0].attempt_count);
+
+        if (attemptCount > 0) {
+            throw new Error('Cannot delete exam with existing attempts (RG-09)');
+        }
+
+        const deleteQuery = `
+            DELETE FROM exams
+            WHERE id = $1
+            RETURNING id
+        `;
+
+        const result: QueryResult = await this.pool.query(deleteQuery, [id]);
+        return result.rows.length > 0;
+    }
 }
