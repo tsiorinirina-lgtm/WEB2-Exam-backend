@@ -35,4 +35,19 @@ export class StudentRepository {
       client.release();
     }
   };
+
+  getStudentByEmail = async (email: string): Promise<User> => {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query<User>(
+        "SELECT * FROM users WHERE email = $1 AND role = 'student'",
+        [email],
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
 }
