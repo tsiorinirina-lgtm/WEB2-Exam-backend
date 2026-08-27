@@ -115,4 +115,60 @@ export class ExamRepository {
         const exam = await this.findById(id);
         return exam as Exam;
     }
+
+    async update(id: number, examData: Partial<ExamInput>): Promise<Exam | null> {
+        const updates: string[] = [];
+        const values: any[] = [];
+        let paramIndex = 1;
+
+        if (examData.title !== undefined) {
+            updates.push(`title = $${paramIndex}`);
+            values.push(examData.title);
+            paramIndex++;
+        }
+
+        if (examData.description !== undefined) {
+            updates.push(`description = $${paramIndex}`);
+            values.push(examData.description);
+            paramIndex++;
+        }
+
+        if (examData.starts_at !== undefined) {
+            updates.push(`starts_at = $${paramIndex}`);
+            values.push(examData.starts_at);
+            paramIndex++;
+        }
+
+        if (examData.ends_at !== undefined) {
+            updates.push(`ends_at = $${paramIndex}`);
+            values.push(examData.ends_at);
+            paramIndex++;
+        }
+
+        if (examData.course_id !== undefined) {
+            updates.push(`course_id = $${paramIndex}`);
+            values.push(examData.course_id);
+            paramIndex++;
+        }
+
+        if (updates.length === 0) {
+            return await this.findById(id);
+        }
+
+        values.push(id);
+        const query = `
+            UPDATE exams
+            SET ${updates.join(', ')}
+            WHERE id = $${paramIndex}
+            RETURNING id
+        `;
+
+        const result: QueryResult = await this.pool.query(query, values);
+        
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return await this.findById(id);
+    }
 }
