@@ -65,4 +65,19 @@ export class StudentRepository {
       client.release();
     }
   };
+
+  updateStudent = async (id: number, user: User): Promise<User> => {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query<User>(
+        "UPDATE users SET email = $1, name = $2, password = $3, is_active = $4 WHERE id = $5 AND role = 'student' RETURNING *",
+        [user.email, user.name, user.password, user.isActive, id],
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
 }
