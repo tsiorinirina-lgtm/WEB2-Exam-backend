@@ -19,4 +19,12 @@ export class QuestionRepository {
             choices: row.choices || []
         };
     }
+
+    private mapChoiceRow(row: any): Choice {
+        return {
+            id: row.id,
+            text: row.text,
+            isCorrect: row.is_correct
+        };
+    }
 }
