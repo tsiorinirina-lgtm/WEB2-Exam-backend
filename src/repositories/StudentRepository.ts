@@ -80,4 +80,18 @@ export class StudentRepository {
       client.release();
     }
   };
+
+  deleteStudent = async (id: number): Promise<void> => {
+    const client = await this.pool.connect();
+    try {
+      await client.query(
+        "UPDATE users SET is_active = false WHERE id = $1 AND role = 'student' RETURNING *",
+        [id],
+      );
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
 }
