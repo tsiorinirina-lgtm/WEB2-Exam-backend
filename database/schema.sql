@@ -78,6 +78,24 @@ CREATE TABLE IF NOT EXISTS answers (
     FOREIGN KEY (choice_id, question_id) REFERENCES choices(id, question_id) ON DELETE RESTRICT
 );
 
+CREATE TABLE refresh_tokens (
+    id            BIGSERIAL PRIMARY KEY,
+    user_id       INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    family_id     UUID NOT NULL,
+    token_hash    CHAR(64) NOT NULL UNIQUE,
+    issued_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    expires_at    TIMESTAMPTZ NOT NULL,
+    revoked_at    TIMESTAMPTZ,
+    revoked_reason TEXT,
+    replaced_by   BIGINT REFERENCES refresh_tokens(id),
+    user_agent    TEXT,
+    ip_address    INET
+);
+
+CREATE INDEX idx_refresh_tokens_token_hash ON refresh_tokens(token_hash);
+CREATE INDEX idx_refresh_tokens_family_id ON refresh_tokens(family_id);
+CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_choices_one_correct_per_question
   ON choices(question_id) WHERE is_correct = true;
 CREATE INDEX IF NOT EXISTS idx_exams_course_id ON exams(course_id);
