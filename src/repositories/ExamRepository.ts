@@ -195,4 +195,43 @@ export class ExamRepository {
         const result: QueryResult = await this.pool.query(deleteQuery, [id]);
         return result.rows.length > 0;
     }
+
+    async getResults(examId: number): Promise<any> {
+        const query = `
+            SELECT 
+                a.id as attempt_id,
+                s.id as student_id,
+                s.name as student_name,
+                s.email as student_email,
+                a.score,
+                a.created_at as submitted_at,
+                (
+                    SELECT SUM(q.points)
+                    FROM questions q
+                    WHERE q.exam_id = $1
+                ) as total_points
+            FROM attempts a
+            JOIN students s ON a.student_id = s.id
+            WHERE a.exam_id = $1
+            ORDER BY a.score DESC, a.created_at ASC
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [examId]);
+        
+        let average = 0;
+        if (result.rows.length > 0) {
+            const totalScore = result.rows.reduce((sum, row) => sum + row.score, 0);
+            average = totalScore / result.rows.length;
+        }
+
+        return {
+            results: result.rows.map(row => ({
+                ...row,
+                score: parseFloat(row.score),
+                total_points: parseInt(row.total_points)
+            })),
+            average: average,
+            total_students: result.rows.length
+        };
+    }
 }
