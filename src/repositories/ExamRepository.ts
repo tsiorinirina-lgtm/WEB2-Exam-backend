@@ -13,15 +13,15 @@ export class ExamRepository {
             id: row.id,
             title: row.title,
             description: row.description,
-            starts_at: new Date(row.starts_at),
-            ends_at: new Date(row.ends_at),
+            startsAt: new Date(row.starts_at),
+            endsAt: new Date(row.ends_at),
             course: {
                 id: row.course_id,
                 code: row.course_code,
                 name: row.course_name
             },
-            question_count: parseInt(row.question_count),
-            attempt_count: parseInt(row.attempt_count)
+            questionCount: parseInt(row.question_count),
+            attemptCount: parseInt(row.attempt_count)
         };
     }
 
@@ -102,11 +102,11 @@ export class ExamRepository {
         `;
 
         const values = [
-            examData.course_id,
+            examData.courseId,
             examData.title,
             examData.description || null,
-            examData.starts_at,
-            examData.ends_at
+            examData.startsAt,
+            examData.endsAt
         ];
 
         const result: QueryResult = await this.pool.query(query, values);
@@ -133,21 +133,21 @@ export class ExamRepository {
             paramIndex++;
         }
 
-        if (examData.starts_at !== undefined) {
+        if (examData.startsAt !== undefined) {
             updates.push(`starts_at = $${paramIndex}`);
-            values.push(examData.starts_at);
+            values.push(examData.startsAt);
             paramIndex++;
         }
 
-        if (examData.ends_at !== undefined) {
+        if (examData.endsAt !== undefined) {
             updates.push(`ends_at = $${paramIndex}`);
-            values.push(examData.ends_at);
+            values.push(examData.endsAt);
             paramIndex++;
         }
 
-        if (examData.course_id !== undefined) {
+        if (examData.courseId !== undefined) {
             updates.push(`course_id = $${paramIndex}`);
-            values.push(examData.course_id);
+            values.push(examData.courseId);
             paramIndex++;
         }
 

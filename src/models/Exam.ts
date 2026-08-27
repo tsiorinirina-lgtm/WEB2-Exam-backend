@@ -8,7 +8,7 @@ export interface Exam {
   id: number;
   title: string;
   description: string | null;
-  startsAt: Date;
+  : Date;
   endsAt: Date;
   course: ExamCourseSummary;
   questionCount: number;
