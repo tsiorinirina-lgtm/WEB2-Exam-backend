@@ -93,4 +93,26 @@ export class ExamRepository {
 
         return this.mapExamRow(result.rows[0]);
     }
+
+    async create(examData: ExamInput): Promise<Exam> {
+        const query = `
+            INSERT INTO exams (course_id, title, description, starts_at, ends_at)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id
+        `;
+
+        const values = [
+            examData.course_id,
+            examData.title,
+            examData.description || null,
+            examData.starts_at,
+            examData.ends_at
+        ];
+
+        const result: QueryResult = await this.pool.query(query, values);
+        const id = result.rows[0].id;
+
+        const exam = await this.findById(id);
+        return exam as Exam;
+    }
 }
