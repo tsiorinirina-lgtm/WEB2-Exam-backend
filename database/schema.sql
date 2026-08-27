@@ -3,7 +3,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'student');
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY DEFAULT,
   mail VARCHAR(255) NOT NULL UNIQUE,
-  firstname VARCHAR(100) NOT NULL,
+  firstname VARCHAR(100),
   lastname VARCHAR(100) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT true,
