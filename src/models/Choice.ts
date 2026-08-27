@@ -1,11 +1,11 @@
 export interface Choice {
-    id: string;
-    text: string;
-    is_correct: boolean;
-    question_id: string;
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  questionId: string;
 }
 
 export interface ChoiceInput {
-    text: string;
-    is_correct: boolean;
+  text: string;
+  isCorrect: boolean;
 }
