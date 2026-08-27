@@ -50,4 +50,19 @@ export class StudentRepository {
       client.release();
     }
   };
+
+  createStudent = async (user: User): Promise<User> => {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query<User>(
+        "INSERT INTO users (email, name, password, role) VALUES ($1, $2, $3, 'student') RETURNING *",
+        [user.email, user.name, user.password],
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
 }
