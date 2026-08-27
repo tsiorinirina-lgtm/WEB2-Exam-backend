@@ -29,4 +29,62 @@ export class MyController {
       (req: Request, res: Response) => this.submitAnswer(req, res),
     );
   }
+
+  private getAvailableExams = async (req: Request, res: Response) => {
+    try {
+      const exams = await this.questionService.getAvailableExams(
+        req.authUser.id,
+      );
+      res.status(200).json(exams);
+    } catch (error) {
+      const responseError =
+        error instanceof HttpError ? error : new InternalServerError();
+      res
+        .status(responseError.statusCode)
+        .json({ message: responseError.message });
+    }
+  };
+
+  private getExamDetails = async (req: Request, res: Response) => {
+    try {
+      const exam = await this.questionService.getExamDetails(req.params.id);
+      res.status(200).json(exam);
+    } catch (error) {
+      const responseError =
+        error instanceof HttpError ? error : new InternalServerError();
+      res
+        .status(responseError.statusCode)
+        .json({ message: responseError.message });
+    }
+  };
+
+  private getResults = async (req: Request, res: Response) => {
+    try {
+      const results = await this.questionService.getResults(req.authUser.id);
+      res.status(200).json(results);
+    } catch (error) {
+      const responseError =
+        error instanceof HttpError ? error : new InternalServerError();
+      res
+        .status(responseError.statusCode)
+        .json({ message: responseError.message });
+    }
+  };
+
+  private submitAnswer = async (req: Request, res: Response) => {
+    try {
+      const result = await this.questionService.submitAnswer(
+        req.params.id,
+        req.authUser.id,
+        req.body,
+      );
+      res.status(200).json(result);
+    } catch (error) {
+      const responseError =
+        error instanceof HttpError ? error : new InternalServerError();
+      res
+        .status(responseError.statusCode)
+        .json({ message: responseError.message });
+    }
+  };
 }
