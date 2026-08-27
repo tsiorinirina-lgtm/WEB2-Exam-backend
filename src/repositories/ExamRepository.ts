@@ -56,4 +56,41 @@ export class ExamRepository {
         const result: QueryResult = await this.pool.query(query);
         return result.rows.map(row => this.mapExamRow(row));
     }
+
+    async findById(id: number): Promise<Exam | null> {
+        const query = `
+            SELECT 
+                e.id,
+                e.title,
+                e.description,
+                e.starts_at,
+                e.ends_at,
+                c.id as course_id,
+                c.code as course_code,
+                c.name as course_name,
+                COALESCE(q.question_count, 0) as question_count,
+                COALESCE(a.attempt_count, 0) as attempt_count
+            FROM exams e
+            JOIN courses c ON e.course_id = c.id
+            LEFT JOIN (
+                SELECT exam_id, COUNT(*) as question_count
+                FROM questions
+                GROUP BY exam_id
+            ) q ON e.id = q.exam_id
+            LEFT JOIN (
+                SELECT exam_id, COUNT(*) as attempt_count
+                FROM attempts
+                GROUP BY exam_id
+            ) a ON e.id = a.exam_id
+            WHERE e.id = $1
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [id]);
+        
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return this.mapExamRow(result.rows[0]);
+    }
 }
