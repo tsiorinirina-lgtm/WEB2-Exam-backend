@@ -1,14 +1,36 @@
-import { pool } from "../config/database.ts";
-import { User } from "../models/User.ts";
+import type { Pool } from "pg";
+import type { User } from "../models/User.ts";
 
 export class StudentRepository {
+  private pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
   getAllStudents = async (): Promise<User[]> => {
-    const client = await pool.connect();
+    const client = await this.pool.connect();
     try {
-      const result = await client.queryObject<User[]>(
+      const result = await client.query<User>(
         "SELECT * FROM users WHERE role = 'student'",
       );
       return result.rows;
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
+
+  getStudentById = async (id: number): Promise<User> => {
+    const client = await this.pool.connect();
+    try {
+      const result = await client.query<User>(
+        "SELECT * FROM users WHERE id = $1 AND role = 'student'",
+        [id],
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw error;
     } finally {
       client.release();
     }
