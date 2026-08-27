@@ -261,4 +261,15 @@ export class QuestionRepository {
             client.release();
         }
     }
+
+    async delete(id: number): Promise<boolean> {
+        const deleteQuery = `
+            DELETE FROM questions
+            WHERE id = $1
+            RETURNING id
+        `;
+
+        const result: QueryResult = await this.pool.query(deleteQuery, [id]);
+        return result.rows.length > 0;
+    }
 }
