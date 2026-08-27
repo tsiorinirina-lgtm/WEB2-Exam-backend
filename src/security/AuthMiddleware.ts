@@ -33,7 +33,7 @@ export const authorizeUser =
   (req, res, next) => {
     if (
       req.authUser.role !== "admin" ||
-      !req.authUser.is_active ||
+      !req.authUser.isActive ||
       !req.authUser
     ) {
       const error = new UnauthorizedError("Insufficient permissions");

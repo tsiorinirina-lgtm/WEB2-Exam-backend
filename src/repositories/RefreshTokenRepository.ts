@@ -3,11 +3,11 @@ import { pool } from "../config/database.ts";
 
 export interface StoredRefreshToken {
   id: string;
-  user_id: number;
-  family_id: string;
-  token_hash: string;
-  expires_at: Date;
-  revoked_at: Date | null;
+  userId: number;
+  familyId: string;
+  tokenHash: string;
+  expiresAt: Date;
+  revokedAt: Date | null;
 }
 
 export class RefreshTokenRepository {
@@ -21,7 +21,9 @@ export class RefreshTokenRepository {
     const result = await client.query<StoredRefreshToken>(
       `INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, user_id, family_id, token_hash, expires_at, revoked_at`,
+       RETURNING id, user_id AS "userId", family_id AS "familyId",
+         token_hash AS "tokenHash", expires_at AS "expiresAt",
+         revoked_at AS "revokedAt"`,
       [userId, familyId, tokenHash, expiresAt],
     );
     return result.rows[0];
@@ -32,7 +34,9 @@ export class RefreshTokenRepository {
     client: PoolClient,
   ): Promise<StoredRefreshToken | null> {
     const result = await client.query<StoredRefreshToken>(
-      `SELECT id, user_id, family_id, token_hash, expires_at, revoked_at
+      `SELECT id, user_id AS "userId", family_id AS "familyId",
+        token_hash AS "tokenHash", expires_at AS "expiresAt",
+        revoked_at AS "revokedAt"
        FROM refresh_tokens
        WHERE token_hash = $1
        FOR UPDATE`,

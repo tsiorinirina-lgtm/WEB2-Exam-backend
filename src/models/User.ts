@@ -4,32 +4,32 @@ export interface User {
   id: number;
   email: string;
   name: string;
-  password_hash: string;
-  is_active: boolean;
-  joined_at: Date;
+  password: string;
+  isActive: boolean;
+  joinedAt: Date;
   role: Role;
 }
 
 export interface UserCreateDTO {
   email: string;
   name: string;
-  password_hash: string;
+  password: string;
   role: Role;
 }
 
 export interface UserUpdateDTO {
   email?: string;
   name?: string;
-  is_active?: boolean;
-  password_hash?: string;
+  isActive?: boolean;
+  password?: string;
 }
 
 export interface AuthenticatedUser {
   id: number;
   mail: string;
   name: string;
-  is_active: boolean;
-  created_at: Date;
+  isActive: boolean;
+  createdAt: Date;
   role: Role;
 }
 
