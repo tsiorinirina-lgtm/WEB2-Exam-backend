@@ -1,5 +1,5 @@
 import type { PoolClient } from "pg";
-import { pool } from "../config/database.ts";
+import { pool } from "../database.ts";
 
 export interface StoredRefreshToken {
   id: string;
