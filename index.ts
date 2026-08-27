@@ -4,10 +4,12 @@ import { QuestionController } from "./src/controllers/QuestionController.ts";
 import express from "express";
 import "dotenv/config";
 import { AuthController } from "./src/controllers/AuthController.ts";
+import { MyController } from "./src/controllers/MyController.ts";
 const app: Express = express();
 app.use(express.json());
 new AuthController(app);
 new QuestionController(app);
+new MyController(app);
 const port = process.env.PORT || 3000;
 
 app.get("/ping", (req: Request, res: Response) => {
