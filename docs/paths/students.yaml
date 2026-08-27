@@ -1,93 +1,106 @@
-studentsCollection:
+/students:
   get:
     tags: [Students]
-    summary: Get students
+    summary: Liste des étudiants
     responses:
       "200":
-        description: List of students
+        description: Tous les étudiants (jamais l'admin, jamais le mot de passe)
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/StudentSummary"
+              items: { $ref: "../components/schemas.yaml#/schemas/Student" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
   post:
     tags: [Students]
-    summary: Create users
+    summary: Créer un étudiant
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: "../openapi.yaml#/components/schemas/StudentDTO"
+            type: object
+            required: [name, email, password]
+            properties:
+              name: { type: string, example: Jean Rakoto }
+              email: { type: string, format: email }
+              password:
+                {
+                  type: string,
+                  description: Mot de passe initial (haché en bcrypt côté serveur),
+                }
     responses:
       "201":
-        description: Students created
+        description: Étudiant créé
         content:
           application/json:
-            schema:
-              type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/StudentSummary"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "409":
+        description: Email déjà utilisé ("Email already in use")
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-studentsItem:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/students/{id}:
   parameters:
-    - in: path
-      required: true
-      name: id
-      schema:
-        type: string
-        format: uuid
-        example: 461ae67c-2027-479e-ad63-ebe40e5e6942
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   put:
     tags: [Students]
-    summary: Modify a student
+    summary: Modifier un étudiant (password optionnel = réinitialisation)
     requestBody:
+      required: true
       content:
         application/json:
           schema:
-            $ref: "../openapi.yaml#/components/schemas/StudentDTO"
+            type: object
+            required: [name, email]
+            properties:
+              name: { type: string }
+              email: { type: string, format: email }
+              is_active: { type: boolean }
+              password:
+                type: string
+                description: Si présent, réinitialise le mot de passe
     responses:
       "200":
-        description: Student modified successfully
+        description: Étudiant mis à jour
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/StudentSummary"
-      "404":
-        description: Student not found
+            schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        description: Email déjà utilisé par un autre compte
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
   delete:
     tags: [Students]
-    summary: Deactivate a student
+    summary: Désactiver un étudiant (jamais de suppression physique, RG-10)
     responses:
-      "204":
-        description: Student deactivated successfully
-      "404":
-        description: Student not found
+      "200":
+        description: Compte désactivé (is_active = false)
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Student" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }

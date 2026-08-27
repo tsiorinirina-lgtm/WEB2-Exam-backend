@@ -1,134 +1,135 @@
-myExamsCollection:
+/my/exams:
   get:
-    tags: [Student]
-    summary: Get my exams
-    security:
-      - bearerAuth: []
+    tags: [My]
+    summary: Examens disponibles pour l'étudiant connecté (fenêtre ouverte, non passés)
     responses:
       "200":
-        description: "Exams currently open (RG-03)"
+        description: Liste possiblement vide
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/Exam"
+              items: { $ref: "../components/schemas.yaml#/schemas/MyExam" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-myExamsItem:
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        {
+          $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent",
+        }
+
+/my/exams/{id}:
   parameters:
-    - in: path
-      required: true
-      name: id
-      description: Exam ID
-      schema:
-        type: string
-        format: uuid
-        example: c970740e-1386-4388-b5b5-15f2689df843
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   get:
-    tags: [Student]
-    summary: Get an exam
-    security:
-      - bearerAuth: []
+    tags: [My]
+    summary: Détail d'un examen à passer (sans is_correct — RG-07)
     responses:
       "200":
-        description: Exam found
+        description: Examen avec questions et choix (id et texte uniquement)
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/ExamWithQuestions"
+            schema: { $ref: "../components/schemas.yaml#/schemas/MyExamDetail" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        description: Fenêtre fermée ("Exam is not available") ou mauvais rôle
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: "Outside exam window (RG-03)"
+        description: Examen déjà passé ("Exam already taken")
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-myExamSubmit:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/my/exams/{id}/submit:
   parameters:
-    - in: path
-      required: true
-      name: id
-      description: Exam ID
-      schema:
-        type: string
-        format: uuid
-        example: c970740e-1386-4388-b5b5-15f2689df843
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   post:
-    tags: [Student]
-    summary: Submit an exam
-    security:
-      - bearerAuth: []
+    tags: [My]
+    summary: Soumettre ses réponses (note calculée côté serveur — RG-05/06)
+    description: >
+      Les questions absentes du tableau valent 0 point (soumission partielle
+      autorisée). Chaque question_id doit appartenir à l'examen, chaque
+      choice_id à sa question, sans doublon de question_id.
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: "../openapi.yaml#/components/schemas/SubmissionDTO"
+            type: object
+            required: [answers]
+            properties:
+              answers:
+                type: array
+                items:
+                  type: object
+                  required: [question_id, choice_id]
+                  properties:
+                    question_id: { type: integer, example: 1 }
+                    choice_id: { type: integer, example: 3 }
     responses:
       "201":
-        description: Attempt recorded
+        description: Tentative enregistrée, note et correction complète (RG-12)
         content:
           application/json:
             schema:
-              $ref: "../openapi.yaml#/components/schemas/Result"
+              type: object
+              properties:
+                score: { type: integer, example: 2 }
+                total_points: { type: integer, example: 5 }
+                correction:
+                  type: array
+                  description: Une entrée par question de l'examen, dans l'ordre
+                  items:
+                    {
+                      $ref: "../components/schemas.yaml#/schemas/CorrectionLine",
+                    }
+      "400":
+        description: Réponses invalides (choix d'une autre question, question d'un autre examen, doublon, tableau manquant)
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
       "401":
-        description: Missing or invalid token
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        description: Fenêtre fermée ("Exam is not available") ou mauvais rôle
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
       "409":
-        description: "Already attempted (RG-02) or outside exam window (RG-03)"
+        description: Déjà soumis ("Exam already taken" — RG-02)
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid Data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-myResultsCollection:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/my/results:
   get:
-    tags: [Student]
-    summary: Get my results
-    security:
-      - bearerAuth: []
+    tags: [My]
+    summary: Historique des résultats de l'étudiant connecté
     responses:
       "200":
-        description: List of results
+        description: Tentatives triées de la plus récente à la plus ancienne
         content:
           application/json:
             schema:
               type: array
               items:
-                $ref: "../openapi.yaml#/components/schemas/Result"
+                type: object
+                properties:
+                  exam_id: { type: integer }
+                  title: { type: string }
+                  course_code: { type: string, example: PROG2 }
+                  score: { type: integer }
+                  total_points: { type: integer }
+                  submitted_at: { type: string, format: date-time }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        {
+          $ref: "../components/securitySchemes.yaml#/responses/ForbiddenStudent",
+        }

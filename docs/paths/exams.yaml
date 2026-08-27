@@ -1,255 +1,189 @@
-examsCollection:
+/exams:
   get:
     tags: [Exams]
-    summary: Get exams
-    security:
-      - bearerAuth: []
+    summary: Liste des examens
     responses:
       "200":
-        description: List of exams
+        description: Examens avec leur cours et leurs compteurs
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/Exam"
+              items: { $ref: "../components/schemas.yaml#/schemas/Exam" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
   post:
     tags: [Exams]
-    summary: Create an exam
-    security:
-      - bearerAuth: []
+    summary: Créer un examen
     requestBody:
       required: true
       content:
         application/json:
-          schema:
-            $ref: "../openapi.yaml#/components/schemas/ExamDTO"
+          schema: { $ref: "../components/schemas.yaml#/schemas/ExamInput" }
     responses:
       "201":
-        description: Exam created
+        description: Examen créé
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Exam"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Exam" }
+      "400":
+        description: Champs manquants, cours inconnu ("Course not found") ou dates invalides ("End date must be after start date")
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid Data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-examsItem:
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+
+/exams/{id}:
   parameters:
-    - in: path
-      required: true
-      name: id
-      description: Exam ID
-      schema:
-        type: string
-        format: uuid
-        example: c970740e-1386-4388-b5b5-15f2689df843
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
   get:
     tags: [Exams]
-    summary: Get an exam
-    security:
-      - bearerAuth: []
+    summary: Détail d'un examen
     responses:
       "200":
-        description: Exam found
+        description: L'examen avec cours et compteurs
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Exam"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Exam" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
   put:
     tags: [Exams]
-    summary: Modify an exam
-    security:
-      - bearerAuth: []
+    summary: Modifier un examen
     requestBody:
       required: true
       content:
         application/json:
-          schema:
-            $ref: "../openapi.yaml#/components/schemas/ExamDTO"
+          schema: { $ref: "../components/schemas.yaml#/schemas/ExamInput" }
     responses:
       "200":
-        description: Exam modified successfully
+        description: Examen mis à jour
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Exam"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Exam" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "422":
-        description: Invalid Data
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
   delete:
     tags: [Exams]
-    summary: Delete an exam
-    security:
-      - bearerAuth: []
-    responses:
-      "204":
-        description: Exam deleted successfully
-      "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "409":
-        description: "Exam has attempts (RG-09)"
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-examQuestionsCollection:
-  parameters:
-    - in: path
-      required: true
-      name: id
-      description: Exam ID
-      schema:
-        type: string
-        format: uuid
-        example: c970740e-1386-4388-b5b5-15f2689df843
-  get:
-    tags: [Questions]
-    summary: Get exam questions
-    security:
-      - bearerAuth: []
+    summary: Supprimer un examen (cascade questions/choix ; refusé s'il a des tentatives, RG-09)
     responses:
       "200":
-        description: List of questions
+        description: Examen supprimé
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        description: L'examen a des tentatives ("Cannot delete an exam that has attempts")
+        content:
+          application/json:
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
+
+/exams/{id}/results:
+  parameters:
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
+  get:
+    tags: [Exams]
+    summary: Résultats d'un examen (notes, moyenne)
+    responses:
+      "200":
+        description: Résultats triés par note décroissante puis nom
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                exam:
+                  type: object
+                  properties:
+                    id: { type: integer }
+                    title: { type: string }
+                total_points: { type: integer, example: 5 }
+                average:
+                  type: number
+                  nullable: true
+                  description: Moyenne arrondie à 2 décimales, null si aucune tentative
+                  example: 2.5
+                attempt_count: { type: integer, example: 2 }
+                results:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      student_id: { type: integer }
+                      name: { type: string }
+                      score: { type: integer }
+                      submitted_at: { type: string, format: date-time }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
+      "401":
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+
+/exams/{id}/questions:
+  parameters:
+    - $ref: "../components/securitySchemes.yaml#/parameters/Id"
+  get:
+    tags: [Questions]
+    summary: Questions d'un examen (vue admin, is_correct visible)
+    responses:
+      "200":
+        description: Questions triées par position, choix imbriqués
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/Question"
+              items: { $ref: "../components/schemas.yaml#/schemas/Question" }
+      "400":
+        { $ref: "../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
   post:
     tags: [Questions]
-    summary: Create a question
-    security:
-      - bearerAuth: []
+    summary: Ajouter une question (2 à 6 choix, exactement 1 correct — RG-04)
     requestBody:
       required: true
       content:
         application/json:
-          schema:
-            $ref: "../openapi.yaml#/components/schemas/QuestionDTO"
+          schema: { $ref: "../components/schemas.yaml#/schemas/QuestionInput" }
     responses:
       "201":
-        description: Question created
+        description: Question créée avec ses choix
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Question"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Question" }
       "400":
-        description: "Invalid choices (RG-04)"
+        description: RG-04 violée ("A question must have between 2 and 6 choices" / "A question must have exactly one correct choice") ou champs manquants
         content:
           application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../components/schemas.yaml#/schemas/Error" }
       "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-examResultsCollection:
-  parameters:
-    - in: path
-      required: true
-      name: id
-      description: Exam ID
-      schema:
-        type: string
-        format: uuid
-        example: c970740e-1386-4388-b5b5-15f2689df843
-  get:
-    tags: [Results]
-    summary: Get exam results
-    security:
-      - bearerAuth: []
-    responses:
-      "200":
-        description: List of results
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: "../openapi.yaml#/components/schemas/Result"
-      "401":
-        description: Missing or invalid token
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
-      "404":
-        description: Exam not found
-        content:
-          application/json:
-            schema:
-              $ref: "../openapi.yaml#/components/schemas/Error"
+        { $ref: "../components/securitySchemes.yaml#/responses/Unauthorized" }
+      "403":
+        { $ref: "../components/securitySchemes.yaml#/responses/ForbiddenAdmin" }
+      "404": { $ref: "../components/securitySchemes.yaml#/responses/NotFound" }
+      "409":
+        { $ref: "../components/securitySchemes.yaml#/responses/ConflictLocked" }

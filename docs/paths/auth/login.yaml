@@ -1,23 +1,22 @@
-login:
+/auth/login:
   post:
     tags: [Auth]
-    summary: "Login for users and admin"
+    summary: Connexion (admin ou étudiant)
+    security: []
     requestBody:
       required: true
       content:
         application/json:
           schema:
             type: object
+            required: [email, password]
             properties:
               email:
-                type: string
-                default: niulai@gmail.com
-              password:
-                type: string
-                default: Mamaaa
+                { type: string, format: email, example: admin@examhub.local }
+              password: { type: string, example: admin123 }
     responses:
       "200":
-        description: User authenticated
+        description: Connexion réussie
         content:
           application/json:
             schema:
@@ -25,13 +24,16 @@ login:
               properties:
                 token:
                   type: string
-                  format: jwt
-                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMiJ9.4Adcj3UFYqk
+                  description: JWT valable 24 h contenant userId et role
                 user:
-                  $ref: "../../openapi.yaml#/components/schemas/StudentSummary"
+                  type: object
+                  properties:
+                    id: { type: integer, example: 1 }
+                    name: { type: string, example: Administrateur }
+                    role: { type: string, enum: [admin, student] }
+      "400": { $ref: "../../components/securitySchemes.yaml#/responses/BadRequest" }
       "401":
-        description: Credentials invalid
+        description: Identifiants invalides ("Invalid email or password") ou compte désactivé ("Account disabled")
         content:
           application/json:
-            schema:
-              $ref: "../../openapi.yaml#/components/schemas/Error"
+            schema: { $ref: "../../components/schemas.yaml#/schemas/Error" }

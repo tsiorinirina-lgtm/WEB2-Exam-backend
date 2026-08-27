@@ -1,4 +1,45 @@
-bearerAuth:
-  type: http
-  scheme: bearer
-  bearerFormat: JWT
+securitySchemes:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    description: Jeton obtenu via POST /auth/login, payload { userId, role }, validité 24 h
+
+parameters:
+  Id:
+    name: id
+    in: path
+    required: true
+    schema: { type: integer, minimum: 1 }
+
+responses:
+  BadRequest:
+    description: Données invalides ou identifiant non numérique
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
+  Unauthorized:
+    description: Jeton absent ("No token provided") ou invalide ("Invalid or expired token")
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
+  ForbiddenAdmin:
+    description: Réservé aux administrateurs ("Admin access required")
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
+  ForbiddenStudent:
+    description: Réservé aux étudiants ("Student access required")
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
+  NotFound:
+    description: Ressource introuvable
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
+  ConflictLocked:
+    description: L'examen a des tentatives, questions verrouillées ("Cannot modify questions of an exam that has attempts" — RG-08)
+    content:
+      application/json:
+        schema: { $ref: "./schemas.yaml#/schemas/Error" }
