@@ -44,6 +44,17 @@ export class CourseRepository {
     }
   };
 
+  delete = async (id: string): Promise<void> => {
+    const client = await this.pool.connect();
+    try {
+      await client.query("DELETE FROM courses WHERE id = $1", [id]);
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  };
+
   private toCourse(row: CourseRow): Course {
     return {
       id: String(row.id),
