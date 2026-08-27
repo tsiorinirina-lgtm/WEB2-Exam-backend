@@ -5,8 +5,8 @@ export interface User {
   email: string;
   name: string;
   password: string;
-  is_active: boolean;
-  joined_at: Date;
+  isActive: boolean;
+  joinedAt: Date;
   role: Role;
 }
 
@@ -20,7 +20,7 @@ export interface UserCreateDTO {
 export interface UserUpdateDTO {
   email?: string;
   name?: string;
-  is_active?: boolean;
+  isActive?: boolean;
   password?: string;
 }
 
@@ -28,8 +28,8 @@ export interface AuthenticatedUser {
   id: number;
   mail: string;
   name: string;
-  is_active: boolean;
-  created_at: Date;
+  isActive: boolean;
+  createdAt: Date;
   role: Role;
 }
 
