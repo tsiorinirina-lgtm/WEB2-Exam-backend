@@ -180,4 +180,85 @@ export class QuestionRepository {
             client.release();
         }
     }
+
+    async update(id: number, questionData: Partial<QuestionInput>): Promise<Question | null> {
+        const client = await this.pool.connect();
+        
+        try {
+            await client.query('BEGIN');
+
+            const checkQuery = 'SELECT id FROM questions WHERE id = $1';
+            const checkResult = await client.query(checkQuery, [id]);
+            if (checkResult.rows.length === 0) {
+                return null;
+            }
+
+            const updates: string[] = [];
+            const values: any[] = [];
+            let paramIndex = 1;
+
+            if (questionData.statement !== undefined) {
+                updates.push(`statement = $${paramIndex}`);
+                values.push(questionData.statement);
+                paramIndex++;
+            }
+
+            if (questionData.points !== undefined) {
+                updates.push(`points = $${paramIndex}`);
+                values.push(questionData.points);
+                paramIndex++;
+            }
+
+            if (questionData.position !== undefined) {
+                updates.push(`position = $${paramIndex}`);
+                values.push(questionData.position);
+                paramIndex++;
+            }
+
+            if (updates.length > 0) {
+                values.push(id);
+                const updateQuery = `
+                    UPDATE questions
+                    SET ${updates.join(', ')}
+                    WHERE id = $${paramIndex}
+                `;
+                await client.query(updateQuery, values);
+            }
+
+            if (questionData.choices !== undefined) {
+                if (questionData.choices.length < 2 || questionData.choices.length > 6) {
+                    throw new Error('Question must have between 2 and 6 choices (RG-04)');
+                }
+
+                const correctChoices = questionData.choices.filter(c => c.isCorrect);
+                if (correctChoices.length !== 1) {
+                    throw new Error('Question must have exactly one correct choice (RG-04)');
+                }
+
+                const deleteChoicesQuery = 'DELETE FROM choices WHERE question_id = $1';
+                await client.query(deleteChoicesQuery, [id]);
+
+                for (const choiceInput of questionData.choices) {
+                    const insertChoiceQuery = `
+                        INSERT INTO choices (question_id, text, is_correct)
+                        VALUES ($1, $2, $3)
+                    `;
+                    await client.query(insertChoiceQuery, [
+                        id, 
+                        choiceInput.text, 
+                        choiceInput.isCorrect
+                    ]);
+                }
+            }
+
+            await client.query('COMMIT');
+            return await this.findById(id);
+
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
 }
