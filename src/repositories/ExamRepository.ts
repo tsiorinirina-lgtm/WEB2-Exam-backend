@@ -234,4 +234,15 @@ export class ExamRepository {
             total_students: result.rows.length
         };
     }
+
+    async getAttemptCount(examId: number): Promise<number> {
+        const query = `
+            SELECT COUNT(*) as count
+            FROM attempts
+            WHERE exam_id = $1
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [examId]);
+        return parseInt(result.rows[0].count);
+    }
 }
