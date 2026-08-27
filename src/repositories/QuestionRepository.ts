@@ -80,4 +80,41 @@ export class QuestionRepository {
             return question;
         });
     }
+
+    async findById(id: number): Promise<Question | null> {
+        const questionQuery = `
+            SELECT 
+                id,
+                exam_id,
+                statement,
+                points,
+                position
+            FROM questions
+            WHERE id = $1
+        `;
+
+        const questionResult: QueryResult = await this.pool.query(questionQuery, [id]);
+        
+        if (questionResult.rows.length === 0) {
+            return null;
+        }
+
+        const question = this.mapQuestionRow(questionResult.rows[0]);
+
+        const choiceQuery = `
+            SELECT 
+                id,
+                question_id,
+                text,
+                is_correct
+            FROM choices
+            WHERE question_id = $1
+            ORDER BY id ASC
+        `;
+
+        const choiceResult: QueryResult = await this.pool.query(choiceQuery, [id]);
+        question.choices = choiceResult.rows.map(row => this.mapChoiceRow(row));
+
+        return question;
+    }
 }
