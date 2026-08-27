@@ -28,14 +28,16 @@ export const authenticateUser: RequestHandler = (req, res, next) => {
   }
 };
 
-export const authorizeUser: RequestHandler = (req, res, next) => {
-  if (
-    req.authUser.role !== "admin" ||
-    !req.authUser.is_active ||
-    !req.authUser
-  ) {
-    const error = new UnauthorizedError("Insufficient permissions");
-    return res.status(error.statusCode).json({ message: error.message });
-  }
-  next();
-};
+export const authorizeUser =
+  (role: string): RequestHandler =>
+  (req, res, next) => {
+    if (
+      req.authUser.role !== "admin" ||
+      !req.authUser.is_active ||
+      !req.authUser
+    ) {
+      const error = new UnauthorizedError("Insufficient permissions");
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    next();
+  };
