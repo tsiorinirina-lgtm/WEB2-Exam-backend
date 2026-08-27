@@ -117,4 +117,67 @@ export class QuestionRepository {
 
         return question;
     }
+
+    async create(examId: number, questionData: QuestionInput): Promise<Question> {
+        const client = await this.pool.connect();
+        
+        try {
+            await client.query('BEGIN');
+
+            if (questionData.choices.length < 2 || questionData.choices.length > 6) {
+                throw new Error('Question must have between 2 and 6 choices (RG-04)');
+            }
+
+            const correctChoices = questionData.choices.filter(c => c.isCorrect);
+            if (correctChoices.length !== 1) {
+                throw new Error('Question must have exactly one correct choice (RG-04)');
+            }
+
+            const insertQuestionQuery = `
+                INSERT INTO questions (exam_id, statement, points, position)
+                VALUES ($1, $2, $3, $4)
+                RETURNING id, exam_id, statement, points, position
+            `;
+
+            const points = questionData.points || 1;
+            const position = questionData.position || 1;
+
+            const questionResult: QueryResult = await client.query(insertQuestionQuery, [
+                examId,
+                questionData.statement,
+                points,
+                position
+            ]);
+
+            const question = this.mapQuestionRow(questionResult.rows[0]);
+
+            const insertedChoices: Choice[] = [];
+            for (const choiceInput of questionData.choices) {
+                const insertChoiceQuery = `
+                    INSERT INTO choices (question_id, text, is_correct)
+                    VALUES ($1, $2, $3)
+                    RETURNING id, text, is_correct
+                `;
+
+                const choiceResult: QueryResult = await client.query(insertChoiceQuery, [
+                    question.id,
+                    choiceInput.text,
+                    choiceInput.isCorrect
+                ]);
+
+                insertedChoices.push(this.mapChoiceRow(choiceResult.rows[0]));
+            }
+
+            question.choices = insertedChoices;
+
+            await client.query('COMMIT');
+            return question;
+
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
 }
