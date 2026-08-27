@@ -272,4 +272,13 @@ export class QuestionRepository {
         const result: QueryResult = await this.pool.query(deleteQuery, [id]);
         return result.rows.length > 0;
     }
+
+    async deleteByExamId(examId: number): Promise<void> {
+        const deleteQuery = `
+            DELETE FROM questions
+            WHERE exam_id = $1
+        `;
+
+        await this.pool.query(deleteQuery, [examId]);
+    }
 }
