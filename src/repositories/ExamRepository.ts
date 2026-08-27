@@ -256,4 +256,15 @@ export class ExamRepository {
         const result: QueryResult = await this.pool.query(query, [examId]);
         return parseInt(result.rows[0].count);
     }
+
+    async exists(id: number): Promise<boolean> {
+        const query = `
+            SELECT EXISTS(
+                SELECT 1 FROM exams WHERE id = $1
+            ) as exists
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [id]);
+        return result.rows[0].exists;
+    }
 }
