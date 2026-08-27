@@ -245,4 +245,15 @@ export class ExamRepository {
         const result: QueryResult = await this.pool.query(query, [examId]);
         return parseInt(result.rows[0].count);
     }
+
+    async getQuestionCount(examId: number): Promise<number> {
+        const query = `
+            SELECT COUNT(*) as count
+            FROM questions
+            WHERE exam_id = $1
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [examId]);
+        return parseInt(result.rows[0].count);
+    }
 }
