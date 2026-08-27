@@ -292,4 +292,15 @@ export class QuestionRepository {
         const result: QueryResult = await this.pool.query(query, [examId]);
         return parseInt(result.rows[0].count);
     }
+
+    async getTotalPoints(examId: number): Promise<number> {
+        const query = `
+            SELECT COALESCE(SUM(points), 0) as total
+            FROM questions
+            WHERE exam_id = $1
+        `;
+
+        const result: QueryResult = await this.pool.query(query, [examId]);
+        return parseInt(result.rows[0].total);
+    }
 }
