@@ -39,4 +39,88 @@ export class ExamController {
             this.getResults(res,req)
         });
     }
+
+    private async getAll (res: Response, req: Request) {
+        try {
+            const exams = await this.examService.getAll();
+            res.status(200).json(exams);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
+
+    private async create (res: Response, req: Request) {
+        try {
+            const exam = await this.examService.create(req.body);
+            res.status(201).json(exam);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
+
+    private async getById (res: Response, req: Request) {
+        try {
+            const exam = await this.examService.getById(Number(req.params.id));
+            res.status(200).json(exam);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
+
+    private async update (res: Response, req: Request) {
+        try {
+            const exam = await this.examService.update(Number(req.params.id), req.body);
+            res.status(200).json(exam);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
+
+    private async delete (res: Response, req: Request) {
+        try {
+            const exam = await this.examService.delete(Number(req.params.id));
+            res.status(200).json(exam);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
+
+    private async getResults (res: Response, req: Request) {
+        try {
+            const results = await this.examService.getResults(Number(req.params.id));
+            res.status(200).json(results);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                res.status(error.statusCode).json({ message: error.message });
+            } else {
+                const internalError = new InternalServerError();
+                res.status(internalError.statusCode).json({ message: internalError.message });
+            }
+        }
+    }
 }
