@@ -102,9 +102,9 @@ psql -d examhub -U <your_username> -f ./database/schema.sql -f ./database/seed.s
 
 The seed file creates these local development accounts:
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@examhub.local` | `helloworld` |
+| Role    | Email                   | Password       |
+| ------- | ----------------------- | -------------- |
+| Admin   | `admin@examhub.local`   | `helloworld`   |
 | Student | `student@examhub.local` | `studentFirst` |
 
 ### 4. Run the Development Server
@@ -112,3 +112,7 @@ The seed file creates these local development accounts:
 ```bash
 npm run dev
 ```
+
+## Deployment
+
+This API is available on [Render](https://web2-exam-backend-fnot.onrender.com)
