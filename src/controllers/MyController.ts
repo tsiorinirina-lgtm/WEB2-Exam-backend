@@ -1,9 +1,8 @@
 import type { Request, Response, Express } from "express";
 import { MyService } from "../services/MyService.ts";
-import { authenticateUser, authorizeUser } from "../security/AuthMiddleware.ts";
+import { authenticateUser } from "../security/AuthMiddleware.ts";
 import { HttpError } from "../errors/HttpError.ts";
 import { InternalServerError } from "../errors/InternalServer.ts";
-import { BadRequestError } from "../errors/BadRequest.ts";
 
 export class MyController {
   private myService: MyService;
