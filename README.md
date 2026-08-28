@@ -4,10 +4,10 @@ RESTful API for creating and managing exams, conducting real-time online tests f
 
 ## Tech Stack
 
-* **Framework:** Express.js (TypeScript)
-* **Database:** PostgreSQL
-* **ORM / Database Driver:** `pg` (`node-postgres`)
-* **Authentication:** JWT (JSON Web Tokens)
+- **Framework:** Express.js (TypeScript)
+- **Database:** PostgreSQL
+- **Database Driver:** `pg` (`node-postgres`)
+- **Authentication:** JWT (JSON Web Tokens)
 
 ## Project Structure
 
@@ -29,16 +29,17 @@ backend/
 │   └── services/        # Business logic layer
 ├── .env.example         # Template for environment variables
 ├── index.ts             # Express application entry point
-├── package-lock.json    
-├── package.json   
-└── tsconfig.json  
+├── package-lock.json
+├── package.json
+└── tsconfig.json
 ```
+
 ## Prerequisites
 
 Before getting started, make sure you have the following installed on your machine:
 
-* **Node.js** (v20+ recommended)
-* **PostgreSQL**
+- **Node.js** (v20+ recommended)
+- **PostgreSQL**
 
 ## Installation & Setup
 
@@ -46,7 +47,7 @@ Before getting started, make sure you have the following installed on your machi
 
 Clone the project repository and install all required Node.js dependencies:
 
-``` bash
+```bash
 git clone https://github.com/tsiorinirina-lgtm/WEB2-Exam-backend.git
 cd WEB2-Exam-backend
 npm install
@@ -56,7 +57,14 @@ npm install
 
 Copy the `.env.example` file and rename the copy to `.env`:
 
-``` env
+Replace the JWT_SECRET by the result of this command:
+
+```bash
+node
+require('crypto').randomBytes(64).toString('hex')
+```
+
+```env
 # Port number
 PORT=3000
 FRONTEND_URLS=http://localhost:5173
@@ -80,17 +88,27 @@ SALT_ROUNDS=10
 
 In PostgreSQL, create a new database:
 
-``` bash
+```bash
 psql -U postgres -c "CREATE DATABASE examhub WITH OWNER '<your_username>'"
 ```
 
+If you are going to use another name for the database, don't forget to change DB_NAME variable in your .env
+
 Run the schema and seed files to construct the database structures and insert test data:
 
-``` bash
-psql -d examhub -U <your_username> -f database.sql -f seed.sql
+```bash
+psql -d examhub -U <your_username> -f ./database/schema.sql -f ./database/seed.sql
 ```
 
+The seed file creates these local development accounts:
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@examhub.local` | `helloworld` |
+| Student | `student@examhub.local` | `studentFirst` |
+
 ### 4. Run the Development Server
-``` bash
+
+```bash
 npm run dev
 ```
