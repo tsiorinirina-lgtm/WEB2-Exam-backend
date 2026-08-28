@@ -10,12 +10,9 @@ export class QuestionService {
     private questionRepository: QuestionRepository;
     private examRepository: ExamRepository;
 
-    constructor(
-        questionRepository: QuestionRepository,
-        examRepository: ExamRepository
-    ) {
-        this.questionRepository = questionRepository;
-        this.examRepository = examRepository;
+    constructor(pool: Pool) {
+        this.questionRepository = new QuestionRepository(pool);
+        this.examRepository = new ExamRepository(pool);
     }
 
     private validateChoices(choices: ChoiceInput[]): void {
