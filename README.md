@@ -39,3 +39,15 @@ Before getting started, make sure you have the following installed on your machi
 
 * **Node.js** (v20+ recommended)
 * **PostgreSQL**
+
+## Installation & Setup
+
+### 1. Clone the Repository
+
+Clone the project repository and install all required Node.js dependencies:
+
+```bash
+git clone https://github.com/tsiorinirina-lgtm/WEB2-Exam-backend.git
+cd WEB2-Exam-backend
+npm install
+```
