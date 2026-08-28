@@ -145,7 +145,7 @@ export class StudentRepository {
       name: `${row.firstname} ${row.lastname}`,
       password: row.password_hash,
       isActive: row.is_active,
-      joinedAt: row.joined_at,
+      createdAt: row.joined_at,
       role: row.role,
     };
   }
