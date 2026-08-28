@@ -32,3 +32,10 @@ backend/
 ├── package-lock.json    
 ├── package.json   
 └── tsconfig.json  
+
+## Prerequisites
+
+Before getting started, make sure you have the following installed on your machine:
+
+* **Node.js** (v20+ recommended)
+* **PostgreSQL**
