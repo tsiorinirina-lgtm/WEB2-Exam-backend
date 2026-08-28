@@ -103,4 +103,34 @@ export class QuestionService {
 
         return await this.questionRepository.create(examId, questionData);
     }
+
+    async updateQuestion(id: number, questionData: Partial<QuestionInput>): Promise<Question> {
+        const existingQuestion = await this.validateQuestionForEditing(id);
+        if (questionData.choices !== undefined) {
+            const completeData: QuestionInput = {
+                statement: questionData.statement || existingQuestion.statement,
+                points: questionData.points || existingQuestion.points,
+                position: questionData.position || existingQuestion.position,
+                choices: questionData.choices
+            };
+            this.validateQuestion(completeData);
+        }
+        if (questionData.statement !== undefined && questionData.statement.trim().length === 0) {
+            throw new BadRequestError('Question statement cannot be empty');
+        }
+        if (questionData.points !== undefined && questionData.points < 1) {
+            throw new BadRequestError('Question points must be at least 1');
+        }
+        if (questionData.position !== undefined && questionData.position < 1) {
+            throw new BadRequestError('Question position must be at least 1');
+        }
+        if (questionData.position !== undefined && 
+            questionData.position !== existingQuestion.position) {
+        }
+        const updated = await this.questionRepository.update(id, questionData);
+        if (!updated) {
+            throw new NotFoundError(`Question with id ${id} not found`);
+        }
+        return updated;
+    }
 }
