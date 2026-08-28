@@ -138,4 +138,9 @@ export class QuestionService {
         await this.validateQuestionForEditing(id);
         await this.questionRepository.delete(id);
     }
+
+    async deleteAllQuestions(examId: number): Promise<void> {
+        await this.validateExamForEditing(examId);
+        await this.questionRepository.deleteByExamId(examId);
+    }
 }
