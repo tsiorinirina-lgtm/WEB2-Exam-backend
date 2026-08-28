@@ -8,6 +8,16 @@ import type {
 } from "../models/Course.ts";
 import { BadRequestError } from "../errors/BadRequest.ts";
 import { NotFoundError } from "../errors/NotFound.ts";
+import { ConflictError } from "../errors/Conflict.ts";
+
+function isUniqueViolation(error: unknown): error is { code: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "23505"
+  );
+}
 
 export class CourseService {
   private courseRepository: CourseRepository;
@@ -21,7 +31,14 @@ export class CourseService {
   }
 
   async createCourse(courseData: CourseCreateDTO): Promise<Course> {
-    return this.courseRepository.create(courseData);
+    try {
+      return await this.courseRepository.create(courseData);
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new ConflictError("Course code already exists");
+      }
+      throw error;
+    }
   }
 
   async updateCourse(
@@ -31,6 +48,7 @@ export class CourseService {
     if (!Number.isInteger(id) || id <= 0) {
       throw new BadRequestError("Course id must be a positive integer");
     }
+
     const course = await this.courseRepository.update(id, courseData);
     if (!course) {
       throw new NotFoundError("Course not found");
