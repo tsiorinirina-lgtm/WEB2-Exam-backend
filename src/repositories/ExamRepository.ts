@@ -218,21 +218,30 @@ export class ExamRepository {
         `;
 
         const result: QueryResult = await this.pool.query(query, [examId]);
-        
-        let average = 0;
+        const exam = await this.findById(examId);
+
+        const totalPointsResult: QueryResult = await this.pool.query(
+            `SELECT COALESCE(SUM(points), 0) as total_points FROM questions WHERE exam_id = $1`,
+            [examId]
+        );
+
+        let average = null;
         if (result.rows.length > 0) {
-            const totalScore = result.rows.reduce((sum, row) => sum + row.score, 0);
-            average = totalScore / result.rows.length;
+            const totalScore = result.rows.reduce((sum, row) => sum + Number(row.score), 0);
+            average = Math.round((totalScore / result.rows.length) * 100) / 100;
         }
 
         return {
+            exam: exam ? { id: exam.id, title: exam.title } : null,
+            totalPoints: parseInt(totalPointsResult.rows[0].total_points),
+            average,
+            attemptCount: result.rows.length,
             results: result.rows.map(row => ({
-                ...row,
-                score: parseFloat(row.score),
-                total_points: parseInt(row.total_points)
-            })),
-            average: average,
-            total_students: result.rows.length
+                studentId: row.student_id,
+                name: row.student_name,
+                score: Number(row.score),
+                submittedAt: row.submitted_at
+            }))
         };
     }
 
