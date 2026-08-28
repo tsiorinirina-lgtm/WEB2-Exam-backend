@@ -33,4 +33,24 @@ export class StudentService {
       throw error;
     }
   };
+
+  update = async (id: number, studentData: UserUpdateDTO): Promise<User> => {
+    const existingStudent = await this.studentRepository.getStudentById(id);
+    let password = studentData.password;
+
+    if (password !== undefined) {
+      password = await bcrypt.hash(
+        password,
+        Number(process.env.SALT_ROUNDS ?? 10),
+      );
+    }
+
+    return this.studentRepository.updateStudent(id, {
+      ...studentData,
+      password,
+      email: studentData.email ?? existingStudent.email,
+      name: studentData.name ?? existingStudent.name,
+      isActive: studentData.isActive ?? existingStudent.isActive,
+    });
+  };
 }
