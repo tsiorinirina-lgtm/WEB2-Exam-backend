@@ -5,9 +5,8 @@ function mapRow(row: any) {
   if (!row) return undefined;
   return {
     id: row.id,
-    mail: row.mail,
-    firstname: row.firstname,
-    lastname: row.lastname,
+    email: row.mail,
+    name: `${row.firstname} ${row.lastname}`,
     password: row.password_hash,
     isActive: row.is_active,
     joinedAt: row.joined_at,
