@@ -180,4 +180,18 @@ export class QuestionService {
             await this.questionRepository.update(questionIds[i], { position: i + 1 });
         }
     }
+
+    async validateQuestionData(questionData: QuestionInput): Promise<{ valid: boolean; errors: string[] }> {
+        const errors: string[] = [];
+
+        try {
+            this.validateQuestion(questionData);
+            return { valid: true, errors: [] };
+        } catch (error) {
+            if (error instanceof BadRequestError) {
+                return { valid: false, errors: [error.message] };
+            }
+            throw error;
+        }
+    }
 }
