@@ -151,4 +151,12 @@ export class QuestionService {
         }
         return await this.questionRepository.getQuestionCount(examId);
     }
+
+    async getTotalPoints(examId: number): Promise<number> {
+        const exam = await this.examRepository.findById(examId);
+        if (!exam) {
+            throw new NotFoundError(`Exam with id ${examId} not found`);
+        }
+        return await this.questionRepository.getTotalPoints(examId);
+    }
 }
