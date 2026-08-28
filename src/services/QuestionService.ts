@@ -32,4 +32,17 @@ export class QuestionService {
             );
         }
     }
+
+    private validateQuestion(questionData: QuestionInput): void {
+        if (!questionData.statement || questionData.statement.trim().length === 0) {
+            throw new BadRequestError('Question statement is required');
+        }
+        if (questionData.points !== undefined && questionData.points < 1) {
+            throw new BadRequestError('Question points must be at least 1');
+        }
+        if (questionData.position !== undefined && questionData.position < 1) {
+            throw new BadRequestError('Question position must be at least 1');
+        }
+        this.validateChoices(questionData.choices);
+    }
 }
