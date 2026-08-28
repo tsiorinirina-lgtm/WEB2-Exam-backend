@@ -143,4 +143,12 @@ export class QuestionService {
         await this.validateExamForEditing(examId);
         await this.questionRepository.deleteByExamId(examId);
     }
+
+    async getQuestionCount(examId: number): Promise<number> {
+        const exam = await this.examRepository.findById(examId);
+        if (!exam) {
+            throw new NotFoundError(`Exam with id ${examId} not found`);
+        }
+        return await this.questionRepository.getQuestionCount(examId);
+    }
 }
