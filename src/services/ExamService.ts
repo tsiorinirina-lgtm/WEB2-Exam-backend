@@ -60,6 +60,12 @@ export class ExamService {
     return this.examRepository.delete(id);
   }
 
+  async getResults(id: number): Promise<unknown> {
+    this.validateId(id);
+    await this.getById(id);
+    return this.examRepository.getResults(id);
+  }
+
   private validateExamData(examData: ExamInput): void {
     if (
       !examData ||
