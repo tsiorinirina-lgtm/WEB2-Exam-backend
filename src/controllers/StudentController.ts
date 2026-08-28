@@ -6,6 +6,9 @@ import { InternalServerError } from '../errors/InternalServer.ts';
 import { HttpError } from '../errors/HttpError.ts';
 import { StudentService } from "../services/StudentService.ts";
 import { authenticateUser, authorizeUser } from "../security/AuthMiddleware.ts";
+import { validateStudentCreation } from "../middlewares/StudentValidationMiddleware.ts";
+import { validatePassword } from "../middlewares/PasswordValidationMiddleware.ts";
+import { sanitizeUserInput } from "../middlewares/InputSanitizationMiddleware.ts";
 
 export class StudentController {
     private studentService : StudentService;
@@ -20,7 +23,7 @@ export class StudentController {
             this.getAll(res,req)
         });
 
-        app.post("/api/student", authenticateUser, authorizeUser("admin"), (req:Request, res:Response) => {
+        app.post("/api/student", authenticateUser, authorizeUser("admin"), sanitizeUserInput, validateStudentCreation, validatePassword, (req:Request, res:Response) => {
             this.create(res, req)
         });
 

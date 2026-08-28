@@ -1,5 +1,9 @@
 import type { Pool, QueryResult } from "pg";
-import type { Course, CourseCreateDTO } from "../models/Course.ts";
+import type {
+  Course,
+  CourseCreateDTO,
+  CourseUpdateDTO,
+} from "../models/Course.ts";
 
 interface CourseRow {
   id: number;
@@ -39,6 +43,25 @@ export class CourseRepository {
       return this.toCourse(result.rows[0]);
     } catch (error) {
       throw error;
+    } finally {
+      client.release();
+    }
+  };
+
+  update = async (
+    id: number,
+    courseData: CourseUpdateDTO,
+  ): Promise<Course | null> => {
+    const client = await this.pool.connect();
+    try {
+      const result: QueryResult<CourseRow> = await client.query(
+        `UPDATE courses
+         SET code = $1, name = $2, description = $3
+         WHERE id = $4
+         RETURNING id, code, name, description`,
+        [courseData.code, courseData.name, courseData.description ?? null, id],
+      );
+      return result.rows.length > 0 ? this.toCourse(result.rows[0]) : null;
     } finally {
       client.release();
     }

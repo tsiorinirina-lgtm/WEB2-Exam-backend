@@ -14,13 +14,6 @@ import {
 } from "../security/JWT.ts";
 import { UnauthorizedError } from "../errors/Unauthorized.ts";
 import { pool } from "../config/database.ts";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_PASSWORD_LENGTH = 8;
-
 export class AuthService {
   private userRepository: UserRepository;
   private refreshTokenRepository: RefreshTokenRepository;
@@ -131,12 +124,4 @@ export class AuthService {
     };
   }
 
-  validate({ email, password }: UserCredential): void {
-    if (!EMAIL_PATTERN.test(email)) {
-      throw new UnauthorizedError("Invalid email");
-    }
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      throw new UnauthorizedError("Invalid password");
-    }
-  }
 }
