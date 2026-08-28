@@ -39,7 +39,15 @@ export class AuthController {
       }
       const { email, password } = req.body;
       const authentication = await this.authService.login({ email, password });
-      res.status(200).json({ authentication });
+      res.status(200).json({
+        token: authentication.accessToken,
+        refreshToken: authentication.refreshToken,
+        user: {
+          id: authentication.user.id,
+          name: authentication.user.name,
+          role: authentication.user.role,
+        },
+      });
     } catch (error) {
       if (error instanceof HttpError) {
         res.status(error.statusCode).json({ message: error.message });

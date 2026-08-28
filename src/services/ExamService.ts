@@ -62,8 +62,8 @@ export class ExamService {
 
   async getResults(id: number): Promise<unknown> {
     this.validateId(id);
-    await this.getById(id);
-    return this.examRepository.getResults(id);
+    const exam = await this.getById(id);
+    return this.examRepository.getResults(id, exam);
   }
 
   private validateExamData(examData: ExamInput): void {

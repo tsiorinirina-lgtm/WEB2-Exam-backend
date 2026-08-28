@@ -197,42 +197,47 @@ export class ExamRepository {
         return result.rows.length > 0;
     }
 
-    async getResults(examId: number): Promise<any> {
+    async getResults(examId: number, exam: Exam): Promise<any> {
         const query = `
             SELECT
+                COALESCE(qp.total_points, 0) as total_points,
                 a.id as attempt_id,
                 u.id as student_id,
                 u.firstname || ' ' || u.lastname as student_name,
-                u.mail as student_email,
                 a.score,
-                a.submitted_at,
-                (
-                    SELECT SUM(q.points)
-                    FROM questions q
-                    WHERE q.exam_id = $1
-                ) as total_points
-            FROM attempts a
-            JOIN users u ON a.user_id = u.id
-            WHERE a.exam_id = $1
+                a.submitted_at
+            FROM exams e
+            LEFT JOIN (
+                SELECT exam_id, SUM(points) as total_points
+                FROM questions
+                GROUP BY exam_id
+            ) qp ON qp.exam_id = e.id
+            LEFT JOIN attempts a ON a.exam_id = e.id
+            LEFT JOIN users u ON u.id = a.user_id
+            WHERE e.id = $1
             ORDER BY a.score DESC, a.submitted_at ASC
         `;
 
         const result: QueryResult = await this.pool.query(query, [examId]);
-        
-        let average = 0;
-        if (result.rows.length > 0) {
-            const totalScore = result.rows.reduce((sum, row) => sum + row.score, 0);
-            average = totalScore / result.rows.length;
+        const attempts = result.rows.filter(row => row.attempt_id !== null);
+
+        let average = null;
+        if (attempts.length > 0) {
+            const totalScore = attempts.reduce((sum, row) => sum + Number(row.score), 0);
+            average = Math.round((totalScore / attempts.length) * 100) / 100;
         }
 
         return {
-            results: result.rows.map(row => ({
-                ...row,
-                score: parseFloat(row.score),
-                total_points: parseInt(row.total_points)
-            })),
-            average: average,
-            total_students: result.rows.length
+            exam: { id: exam.id, title: exam.title },
+            totalPoints: parseInt(result.rows[0]?.total_points ?? 0),
+            average,
+            attemptCount: attempts.length,
+            results: attempts.map(row => ({
+                studentId: row.student_id,
+                name: row.student_name,
+                score: Number(row.score),
+                submittedAt: row.submitted_at
+            }))
         };
     }
 

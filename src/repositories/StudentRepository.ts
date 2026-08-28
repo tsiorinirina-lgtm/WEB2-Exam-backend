@@ -143,7 +143,7 @@ export class StudentRepository {
       email: row.mail,
       name: `${row.firstname} ${row.lastname}`,
       isActive: row.is_active,
-      joinedAt: row.joined_at,
+      createdAt: row.joined_at,
       role: row.role,
     };
   }
