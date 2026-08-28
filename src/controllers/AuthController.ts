@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction, Express } from "express";
 import { AuthService } from "../services/AuthService.ts";
 import BadRequest from "../errors/BadRequest.ts";
 import { HttpError } from "../errors/HttpError.ts";
+import { validatePassword } from "../middlewares/PasswordValidationMiddleware.ts";
 
 export class AuthController {
   private authService: AuthService;
@@ -14,6 +15,7 @@ export class AuthController {
   private setupRoutes = (app: Express): void => {
     app.post(
       "/api/auth/login",
+      validatePassword,
       (req: Request, res: Response, next: NextFunction) => {
         this.login(req, res, next);
       },
@@ -26,7 +28,7 @@ export class AuthController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      if (!req.body.email || !req.body.password) {
+      if (!req.body.email) {
         const error = new BadRequest(
           "Please check the validity of your request",
         );

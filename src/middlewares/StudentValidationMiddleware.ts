@@ -11,14 +11,12 @@ export const validateStudentCreation: RequestHandler = (req, res, next) => {
     return res.status(error.statusCode).json({ message: error.message });
   }
 
-  const { name, email, password } = body;
+  const { name, email } = body;
   if (
     typeof name !== "string" ||
     name.trim().length === 0 ||
     typeof email !== "string" ||
-    email.trim().length === 0 ||
-    typeof password !== "string" ||
-    password.length === 0
+    email.trim().length === 0
   ) {
     const error = new BadRequestError(
       "Name, email, and password are required",
