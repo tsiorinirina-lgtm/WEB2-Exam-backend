@@ -6,7 +6,6 @@ interface UserRow {
   mail: string;
   firstname: string;
   lastname: string;
-  password_hash: string;
   is_active: boolean;
   joined_at: Date;
   role: User["role"];
@@ -22,7 +21,7 @@ export class StudentRepository {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
-        "SELECT id, mail, firstname, lastname, password_hash, is_active, joined_at, role FROM users WHERE role = 'student'",
+        "SELECT id, mail, firstname, lastname, is_active, joined_at, role FROM users WHERE role = 'student'",
       );
       return result.rows.map((row) => this.toUser(row));
     } catch (error) {
@@ -36,7 +35,7 @@ export class StudentRepository {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
-        "SELECT id, mail, firstname, lastname, password_hash, is_active, joined_at, role FROM users WHERE id = $1 AND role = 'student'",
+        "SELECT id, mail, firstname, lastname, is_active, joined_at, role FROM users WHERE id = $1 AND role = 'student'",
         [id],
       );
       return this.toUser(result.rows[0]);
@@ -51,7 +50,7 @@ export class StudentRepository {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
-        "SELECT id, mail, firstname, lastname, password_hash, is_active, joined_at, role FROM users WHERE mail = $1 AND role = 'student'",
+        "SELECT id, mail, firstname, lastname, is_active, joined_at, role FROM users WHERE mail = $1 AND role = 'student'",
         [email],
       );
       return this.toUser(result.rows[0]);
@@ -66,7 +65,7 @@ export class StudentRepository {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
-        "INSERT INTO users (mail, firstname, lastname, password_hash, role) VALUES ($1, $2, $3, $4, 'student') RETURNING id, mail, firstname, lastname, password_hash, is_active, joined_at, role",
+        "INSERT INTO users (mail, firstname, lastname, password_hash, role) VALUES ($1, $2, $3, $4, 'student') RETURNING id, mail, firstname, lastname, is_active, joined_at, role",
         [
           user.email,
           user.name.split(" ")[0],
@@ -113,7 +112,7 @@ export class StudentRepository {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
         `UPDATE users SET ${updates.join(", ")}
          WHERE id = $${values.length - 1} AND role = $${values.length}
-         RETURNING id, mail, firstname, lastname, password_hash, is_active, joined_at, role`,
+         RETURNING id, mail, firstname, lastname, is_active, joined_at, role`,
         values,
       );
       return this.toUser(result.rows[0]);
