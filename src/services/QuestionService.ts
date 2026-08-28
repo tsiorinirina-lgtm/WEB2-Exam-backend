@@ -58,4 +58,13 @@ export class QuestionService {
             );
         }
     }
+
+    private async validateQuestionForEditing(questionId: number): Promise<Question> {
+        const question = await this.questionRepository.findById(questionId);
+        if (!question) {
+            throw new NotFoundError(`Question with id ${questionId} not found`);
+        }
+        await this.validateExamForEditing(question.examId);
+        return question;
+    }
 }
