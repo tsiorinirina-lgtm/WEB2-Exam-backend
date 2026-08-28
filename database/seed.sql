@@ -3,7 +3,7 @@ VALUES (
   'admin@examhub.local',
   'Admin',
   'User',
-  '$2b$10$ADyNSh9B1/dNdcGF9DVDXefcDuN62cZS0V0VNzlckXSkdvGTx62JC',
+  '$2b$10$G68nl7BppulwUwTgqkDcXe0gxPlz/VaYdEuhp3m0SZn.x5EzfneQW',
   true,
   'admin'
 );
@@ -13,7 +13,7 @@ VALUES (
   'student@examhub.local',
   'Jane',
   'Doe',
-  '$2b$10$jtnTbz/bBC8eI4SbEOkHvuMYKbHZrxkE41qQXG6pLl5ITjjx1w/4K',
+  '$2b$10$U8GpepsLOabi4Ow1qVnNn.QgAx3HLFdkQJsqFmEvOpG7P3QXeYjm',
   true,
   'student'
 );
