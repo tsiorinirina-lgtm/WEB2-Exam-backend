@@ -48,3 +48,11 @@ export interface SubmitExamResult {
   totalPoints: number;
   correction: CorrectionLine[];
 }
+
+export interface ExamCorrectionRow {
+  question_id: number;
+  statement: string;
+  points: number;
+  correct_choice_id: number;
+  choice_id: number | null;
+}

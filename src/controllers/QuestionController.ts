@@ -38,10 +38,10 @@ export class QuestionController {
     );
   }
 
-  private getAllQuestions = async(
+  private getAllQuestions = async (
     req: Request,
     res: Response,
-  ): Promise<void> {
+  ): Promise<void> => {
     try {
       const is_admin = req.authUser.role === "admin";
       const questions = await this.questionService.getAllQuestions(
@@ -74,7 +74,10 @@ export class QuestionController {
     }
   };
 
-  private updateQuestion = async (req: Request, res: Response): Promise<void> => {
+  private updateQuestion = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const id: number = parseInt(req.params.id as string);
       if (Number.isNaN(id)) {
@@ -91,7 +94,10 @@ export class QuestionController {
     }
   };
 
-  private deleteQuestion = async (req: Request, res: Response): Promise<void> => {
+  private deleteQuestion = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const id: number = parseInt(req.params.id as string);
       if (Number.isNaN(id)) {
