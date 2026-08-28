@@ -1,4 +1,5 @@
-import { Pool } from "pg";
+import type { Pool } from "pg";
+import { pool as sharedPool } from "../config/database.ts";
 import { CourseRepository } from "../repositories/CourseRepository.ts";
 import type {
   Course,
@@ -11,7 +12,7 @@ import { NotFoundError } from "../errors/NotFound.ts";
 export class CourseService {
   private courseRepository: CourseRepository;
 
-  constructor(pool = new Pool()) {
+  constructor(pool: Pool = sharedPool) {
     this.courseRepository = new CourseRepository(pool);
   }
 

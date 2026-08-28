@@ -7,6 +7,7 @@ import cors from "cors";
 import "dotenv/config";
 import { AuthController } from "./src/controllers/AuthController.ts";
 import { MyController } from "./src/controllers/MyController.ts";
+import { StudentController } from "./src/controllers/StudentController.ts";
 const app: Express = express();
 const allowedOrigins = (process.env.FRONTEND_URLS ??
   "http://localhost:5173")
@@ -32,6 +33,7 @@ app.use(express.json());
 new CourseController(app);
 
 new ExamController(app);
+new StudentController(app);
 app.get("/ping", (req: Request, res: Response) => {
   res.send("pong");
 });

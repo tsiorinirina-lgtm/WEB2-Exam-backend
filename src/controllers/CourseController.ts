@@ -26,7 +26,7 @@ export class CourseController {
       (req: Request, res: Response) => this.getAllCourses(req, res),
     );
     app.post(
-      "api/courses",
+      "/api/courses",
       authenticateUser,
       authorizeUser("admin"),
       (req: Request, res: Response) => this.createCourse(req, res),

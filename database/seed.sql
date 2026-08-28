@@ -1,19 +1,19 @@
-INSERT INTO users (email, firstname, lastname, password_hash, is_active, role)
+INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'admin@examhub.local',
   'Admin',
   'User',
-  '$2b$10$.xXj/BfySqy8prqiYyUbr.psCaZpIuFHZGwoWeCxjRnymfwVWV9by',
+  '$2b$10$ADyNSh9B1/dNdcGF9DVDXefcDuN62cZS0V0VNzlckXSkdvGTx62JC',
   true,
   'admin'
 );
 
-INSERT INTO users (email, firstname, lastname, password_hash, is_active, role)
+INSERT INTO users (mail, firstname, lastname, password_hash, is_active, role)
 VALUES (
   'student@examhub.local',
   'Jane',
   'Doe',
-  '$2b$10$r.kEQNv7XqfiewpOwYXj7uXuH5lCGaNu74A5RJcFEcKRIJxGcl7hO',
+  '$2b$10$jtnTbz/bBC8eI4SbEOkHvuMYKbHZrxkE41qQXG6pLl5ITjjx1w/4K',
   true,
   'student'
 );

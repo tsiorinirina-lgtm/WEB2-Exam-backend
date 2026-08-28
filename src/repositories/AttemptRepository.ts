@@ -83,6 +83,12 @@ export class AttemptRepository {
     submittedAnswers: SubmitAnswerInput[],
   ): Promise<SubmitExamResult> {
     const client = await this.pool.connect();
+    const answersJson = JSON.stringify(
+      submittedAnswers.map((a) => ({
+        question_id: a.questionId,
+        choice_id: a.choiceId,
+      })),
+    );
 
     try {
       await client.query("BEGIN");
@@ -108,7 +114,7 @@ export class AttemptRepository {
           )
          WHERE q.exam_id = $1
          ORDER BY q.position ASC, q.id ASC`,
-        [examId, JSON.stringify(submittedAnswers)],
+        [examId, answersJson],
       );
 
       const questionIds = new Set(
@@ -134,7 +140,7 @@ export class AttemptRepository {
              FROM jsonb_to_recordset($1::jsonb)
                AS answer(question_id int, choice_id int)
            )`,
-          [JSON.stringify(submittedAnswers)],
+          [answersJson],
         );
       if (choiceValidation.rows.length !== submittedAnswers.length) {
         throw new Error("Choice does not belong to question");

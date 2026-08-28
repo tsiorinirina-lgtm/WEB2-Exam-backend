@@ -20,15 +20,15 @@ export class StudentController {
             this.getAll(res,req)
         });
 
-        app.post("/api/student", authenticateUser, authorizeUser("admin"), sanitizeUserInput, validateStudentCreation, validatePassword, (req:Request, res:Response) => {
+        app.post("/api/students", authenticateUser, authorizeUser("admin"), sanitizeUserInput, validateStudentCreation, validatePassword, (req:Request, res:Response) => {
             this.create(res, req)
         });
 
-        app.put("/api/student/:id", authenticateUser, authorizeUser("admin"), (req:Request, res:Response) => {
+        app.put("/api/students/:id", authenticateUser, authorizeUser("admin"), (req:Request, res:Response) => {
             this.update(res, req)
         });
 
-        app.delete("/api/student/:id", authenticateUser, authorizeUser("admin"), (req:Request, res:Response) => {
+        app.delete("/api/students/:id", authenticateUser, authorizeUser("admin"), (req:Request, res:Response) => {
             this.delete(res, req)
         });
     }

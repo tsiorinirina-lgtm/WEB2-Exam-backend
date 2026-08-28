@@ -15,12 +15,12 @@ export class QuestionController {
 
   private setupRoutes(app: Express) {
     app.get(
-      "api/exams/:id/questions",
+      "/api/exams/:id/questions",
       authenticateUser,
       (req: Request, res: Response) => this.getAllQuestions(req, res),
     );
     app.post(
-      "api/exams/:id/questions",
+      "/api/exams/:id/questions",
       authenticateUser,
       authorizeUser("admin"),
       (req: Request, res: Response) => this.addQuestion(req, res),

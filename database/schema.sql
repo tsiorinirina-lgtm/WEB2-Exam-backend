@@ -1,7 +1,7 @@
 CREATE TYPE user_role AS ENUM ('admin', 'student');
 
 CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   mail VARCHAR(255) NOT NULL UNIQUE,
   firstname VARCHAR(100) NOT NULL,
   lastname VARCHAR(100) NOT NULL,
@@ -12,27 +12,29 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS courses (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   code VARCHAR(20) NOT NULL UNIQUE,
   name VARCHAR(255) NOT NULL,
   description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS exams (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  date_hour_start TIMESTAMP NOT NULL,
-  date_hour_end TIMESTAMP NOT NULL,
+  starts_at TIMESTAMP NOT NULL,
+  ends_at TIMESTAMP NOT NULL,
   course_id INT NOT NULL,
-  CHECK (date_hour_end > date_hour_start),
+  CHECK (ends_at > starts_at),
   CONSTRAINT fk_exams_course
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS questions (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   statement TEXT NOT NULL,
+  points INT NOT NULL DEFAULT 1,
+  position INT NOT NULL DEFAULT 1,
   exam_id INT NOT NULL,
   UNIQUE (id, exam_id),
   CONSTRAINT fk_questions_exam
@@ -40,8 +42,8 @@ CREATE TABLE IF NOT EXISTS questions (
 );
 
 CREATE TABLE IF NOT EXISTS choices (
-  id SERIAL PRIMARY KEY DEFAULT,
-  label TEXT NOT NULL,
+  id SERIAL PRIMARY KEY,
+  text TEXT NOT NULL,
   is_correct BOOLEAN NOT NULL DEFAULT false,
   question_id INT NOT NULL,
   UNIQUE (id, question_id),
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS choices (
 );
 
 CREATE TABLE IF NOT EXISTS attempts (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   submitted_at TIMESTAMP NOT NULL DEFAULT now(),
   score INT NOT NULL,
   exam_id INT NOT NULL,
@@ -64,7 +66,7 @@ CREATE TABLE IF NOT EXISTS attempts (
 );
 
 CREATE TABLE IF NOT EXISTS answers (
-  id SERIAL PRIMARY KEY DEFAULT,
+  id SERIAL PRIMARY KEY,
   attempt_id INT NOT NULL,
   exam_id INT NOT NULL,
   question_id INT NOT NULL,

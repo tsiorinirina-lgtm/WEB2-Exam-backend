@@ -11,19 +11,19 @@ export class MyController {
     this.setupRoutes(app);
   }
   setupRoutes(app: Express) {
-    app.get("api/my/exams", authenticateUser, (req: Request, res: Response) =>
+    app.get("/api/my/exams", authenticateUser, (req: Request, res: Response) =>
       this.getAvailableExams(req, res),
     );
     app.get(
-      "api/my/exams/:id",
+      "/api/my/exams/:id",
       authenticateUser,
       (req: Request, res: Response) => this.getExamDetails(req, res),
     );
-    app.get("api/my/results", authenticateUser, (req: Request, res: Response) =>
+    app.get("/api/my/results", authenticateUser, (req: Request, res: Response) =>
       this.getResults(req, res),
     );
     app.post(
-      "api/my/exams/:id/submit",
+      "/api/my/exams/:id/submit",
       authenticateUser,
       (req: Request, res: Response) => this.submitAnswer(req, res),
     );
