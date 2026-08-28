@@ -125,12 +125,12 @@ export class QuestionRepository {
             await client.query('BEGIN');
 
             if (questionData.choices.length < 2 || questionData.choices.length > 6) {
-                throw new Error('Question must have between 2 and 6 choices (RG-04)');
+                throw new Error('Question must have between 2 and 6 choices');
             }
 
             const correctChoices = questionData.choices.filter(c => c.isCorrect);
             if (correctChoices.length !== 1) {
-                throw new Error('Question must have exactly one correct choice (RG-04)');
+                throw new Error('Question must have exactly one correct choice');
             }
 
             const insertQuestionQuery = `
@@ -227,12 +227,12 @@ export class QuestionRepository {
 
             if (questionData.choices !== undefined) {
                 if (questionData.choices.length < 2 || questionData.choices.length > 6) {
-                    throw new Error('Question must have between 2 and 6 choices (RG-04)');
+                    throw new Error('Question must have between 2 and 6 choices');
                 }
 
                 const correctChoices = questionData.choices.filter(c => c.isCorrect);
                 if (correctChoices.length !== 1) {
-                    throw new Error('Question must have exactly one correct choice (RG-04)');
+                    throw new Error('Question must have exactly one correct choice');
                 }
 
                 const deleteChoicesQuery = 'DELETE FROM choices WHERE question_id = $1';
