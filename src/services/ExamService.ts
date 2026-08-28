@@ -54,6 +54,12 @@ export class ExamService {
     return updatedExam;
   }
 
+  async delete(id: number): Promise<boolean> {
+    this.validateId(id);
+    await this.getById(id);
+    return this.examRepository.delete(id);
+  }
+
   private validateExamData(examData: ExamInput): void {
     if (
       !examData ||
