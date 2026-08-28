@@ -1,14 +1,14 @@
 import type { Request, Response, Express } from "express";
-import { QuestionService } from "../services/MyService.ts";
+import { MyService } from "../services/MyService.ts";
 import { authenticateUser, authorizeUser } from "../security/AuthMiddleware.ts";
 import { HttpError } from "../errors/HttpError.ts";
 import { InternalServerError } from "../errors/InternalServer.ts";
 import { BadRequestError } from "../errors/BadRequest.ts";
 
 export class MyController {
-  private questionService: QuestionService;
+  private myService: MyService;
   constructor(app: Express) {
-    this.questionService = new QuestionService();
+    this.myService = new MyService();
     this.setupRoutes(app);
   }
   setupRoutes(app: Express) {
@@ -32,7 +32,7 @@ export class MyController {
 
   private getAvailableExams = async (req: Request, res: Response) => {
     try {
-      const exams = await this.questionService.getAvailableExams(
+      const exams = await this.myService.getAvailableExams(
         req.authUser.id,
       );
       res.status(200).json(exams);
@@ -47,7 +47,7 @@ export class MyController {
 
   private getExamDetails = async (req: Request, res: Response) => {
     try {
-      const exam = await this.questionService.getExamDetails(req.params.id);
+      const exam = await this.myService.getExamDetails(req.params.id);
       res.status(200).json(exam);
     } catch (error) {
       const responseError =
@@ -60,7 +60,7 @@ export class MyController {
 
   private getResults = async (req: Request, res: Response) => {
     try {
-      const results = await this.questionService.getResults(req.authUser.id);
+      const results = await this.myService.getResults(req.authUser.id);
       res.status(200).json(results);
     } catch (error) {
       const responseError =
@@ -73,7 +73,7 @@ export class MyController {
 
   private submitAnswer = async (req: Request, res: Response) => {
     try {
-      const result = await this.questionService.submitAnswer(
+      const result = await this.myService.submitAnswer(
         req.params.id,
         req.authUser.id,
         req.body,
