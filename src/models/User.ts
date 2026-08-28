@@ -10,6 +10,8 @@ export interface User {
   role: Role;
 }
 
+export type PublicUser = Omit<User, "password">;
+
 export interface UserCreateDTO {
   email: string;
   name: string;
