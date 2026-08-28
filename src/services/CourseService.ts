@@ -49,11 +49,18 @@ export class CourseService {
       throw new BadRequestError("Course id must be a positive integer");
     }
 
-    const course = await this.courseRepository.update(id, courseData);
-    if (!course) {
-      throw new NotFoundError("Course not found");
+    try {
+      const course = await this.courseRepository.update(id, courseData);
+      if (!course) {
+        throw new NotFoundError("Course not found");
+      }
+      return course;
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new ConflictError("Course code already exists");
+      }
+      throw error;
     }
-    return course;
   }
 
   async deleteCourse(id: number): Promise<void> {
