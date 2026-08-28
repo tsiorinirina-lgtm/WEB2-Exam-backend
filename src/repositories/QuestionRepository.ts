@@ -1,4 +1,5 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool } from 'pg';
+import type { QueryResult } from 'pg';
 import type{ Question, QuestionInput } from '../models/Question.js';
 import type { Choice, ChoiceInput } from '../models/Choice.js';
 
@@ -24,7 +25,8 @@ export class QuestionRepository {
         return {
             id: row.id,
             text: row.text,
-            isCorrect: row.is_correct
+            isCorrect: row.is_correct,
+            questionId: row.question_id,
         };
     }
 

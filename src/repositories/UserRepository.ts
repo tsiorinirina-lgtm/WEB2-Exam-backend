@@ -1,4 +1,4 @@
-import type { Pool, QueryResult } from "pg";
+import type { Pool } from "pg";
 import type { User } from "../models/User.ts";
 
 export class UserRepository {

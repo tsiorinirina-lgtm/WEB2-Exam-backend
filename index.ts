@@ -1,7 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { CourseController } from "./src/controllers/CourseController.ts";
 import { ExamController } from "./src/controllers/ExamController.ts";
-import type { AuthenticatedUser } from "./src/models/User.ts";
 import { QuestionController } from "./src/controllers/QuestionController.ts";
 import express from "express";
 import cors from "cors";

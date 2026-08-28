@@ -1,5 +1,9 @@
 import type { Request, Response, Express } from "express";
-import type { Course } from "../models/Course.ts";
+import type {
+  Course,
+  CourseCreateDTO,
+  CourseUpdateDTO,
+} from "../models/Course.ts";
 import { CourseService } from "../services/CourseService.ts";
 import { HttpError } from "../errors/HttpError.ts";
 import { BadRequestError } from "../errors/BadRequest.ts";
@@ -56,7 +60,7 @@ export class CourseController {
 
   private async createCourse(req: Request, res: Response): Promise<void> {
     try {
-      const course: Course = req.body;
+      const course: CourseCreateDTO = req.body;
       const createdCourse: Course =
         await this.courseService.createCourse(course);
       res.status(201).json(createdCourse);
@@ -75,7 +79,7 @@ export class CourseController {
       if (Number.isNaN(id)) {
         throw new BadRequestError("Course id must be a number");
       }
-      const course: Course = req.body;
+      const course: CourseUpdateDTO = req.body;
       const updatedCourse: Course = await this.courseService.updateCourse(
         id,
         course,
