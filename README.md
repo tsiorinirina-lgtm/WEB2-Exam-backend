@@ -89,3 +89,8 @@ Run the schema and seed files to construct the database structures and insert te
 ```bash
 psql -d examhub -U <your_username> -f database.sql -f seed.sql
 ```
+
+### 4. Run the Development Server
+```bash
+npm run dev
+```
