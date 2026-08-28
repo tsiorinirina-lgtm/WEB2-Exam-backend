@@ -45,7 +45,7 @@ export class CourseController {
     );
   }
 
-  private async getAllCourses(req: Request, res: Response): Promise<void> {
+  private async getAllCourses(_req: Request, res: Response): Promise<void> {
     try {
       const courses: Course[] = await this.courseService.getAllCourses();
       res.status(200).json(courses);

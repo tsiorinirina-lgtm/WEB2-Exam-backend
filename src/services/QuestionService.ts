@@ -181,8 +181,6 @@ export class QuestionService {
     }
 
     async validateQuestionData(questionData: QuestionInput): Promise<{ valid: boolean; errors: string[] }> {
-        const errors: string[] = [];
-
         try {
             this.validateQuestion(questionData);
             return { valid: true, errors: [] };
