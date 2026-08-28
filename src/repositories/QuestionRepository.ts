@@ -314,13 +314,4 @@ export class QuestionRepository {
         const result: QueryResult = await this.pool.query(query, [id]);
         return result.rows[0].exists;
     }
-
-    async validateChoices(choices: ChoiceInput[]): Promise<boolean> {
-        if (choices.length < 2 || choices.length > 6) {
-            return false;
-        }
-
-        const correctChoices = choices.filter(c => c.isCorrect);
-        return correctChoices.length === 1;
-    }
 }
