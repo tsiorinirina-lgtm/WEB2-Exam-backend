@@ -3,6 +3,7 @@ import { AuthService } from "../services/AuthService.ts";
 import BadRequest from "../errors/BadRequest.ts";
 import { HttpError } from "../errors/HttpError.ts";
 import { validatePassword } from "../middlewares/PasswordValidationMiddleware.ts";
+import { sanitizeUserInput } from "../middlewares/InputSanitizationMiddleware.ts";
 
 export class AuthController {
   private authService: AuthService;
@@ -15,6 +16,7 @@ export class AuthController {
   private setupRoutes = (app: Express): void => {
     app.post(
       "/api/auth/login",
+      sanitizeUserInput,
       validatePassword,
       (req: Request, res: Response, next: NextFunction) => {
         this.login(req, res, next);
