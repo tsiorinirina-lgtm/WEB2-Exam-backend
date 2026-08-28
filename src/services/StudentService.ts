@@ -1,6 +1,6 @@
 import { StudentRepository } from "../repositories/StudentRepository.ts";
 import { pool } from "../config/database.ts";
-import type { Student } from "../models/Student.ts";
+import type { User } from "../models/User.ts";
 
 export class StudentService {
   private studentRepository: StudentRepository;
@@ -9,7 +9,7 @@ export class StudentService {
     this.studentRepository = new StudentRepository(pool);
   }
 
-  getAll = async (): Promise<Student[]> => {
+  getAll = async (): Promise<User[]> => {
     try {
       return await this.studentRepository.getAllStudents();
     } catch (error) {
@@ -17,7 +17,7 @@ export class StudentService {
     }
   };
 
-  create = async (studentData: Student): Promise<Student> => {
+  create = async (studentData: User): Promise<User> => {
     try {
       return await this.studentRepository.createStudent(studentData);
     } catch (error) {
