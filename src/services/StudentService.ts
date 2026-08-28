@@ -16,4 +16,12 @@ export class StudentService {
       throw error;
     }
   };
+
+  create = async (studentData: Student): Promise<Student> => {
+    try {
+      return await this.studentRepository.createStudent(studentData);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
