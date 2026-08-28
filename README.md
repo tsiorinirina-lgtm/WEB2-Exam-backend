@@ -6,7 +6,7 @@ RESTful API for creating and managing exams, conducting real-time online tests f
 
 * **Framework:** Express.js (TypeScript)
 * **Database:** PostgreSQL
-* **ORM / Database Driver:** `pg` (`node-postgres`)
+* **Database Driver:** `pg` (`node-postgres`)
 * **Authentication:** JWT (JSON Web Tokens)
 
 ## Project Structure
@@ -56,6 +56,12 @@ npm install
 
 Copy the `.env.example` file and rename the copy to `.env`:
 
+Replace the JWT_SECRET by the result of this command:
+``` bash
+node
+require('crypto').randomBytes(64).toString('hex')
+```
+
 ``` env
 # Port number
 PORT=3000
@@ -83,6 +89,7 @@ In PostgreSQL, create a new database:
 ``` bash
 psql -U postgres -c "CREATE DATABASE examhub WITH OWNER '<your_username>'"
 ```
+If you are going to use another name for the database, don't forget to change DB_NAME variable in your .env
 
 Run the schema and seed files to construct the database structures and insert test data:
 
