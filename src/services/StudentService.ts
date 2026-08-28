@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { StudentRepository } from "../repositories/StudentRepository.ts";
 import { pool } from "../config/database.ts";
-import type { User, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
+import type { PublicUser, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
 
 export class StudentService {
   private studentRepository: StudentRepository;
@@ -10,7 +10,7 @@ export class StudentService {
     this.studentRepository = new StudentRepository(pool);
   }
 
-  getAll = async (): Promise<User[]> => {
+  getAll = async (): Promise<PublicUser[]> => {
     try {
       return await this.studentRepository.getAllStudents();
     } catch (error) {
@@ -18,7 +18,7 @@ export class StudentService {
     }
   };
 
-  create = async (studentData: UserCreateDTO): Promise<User> => {
+  create = async (studentData: UserCreateDTO): Promise<PublicUser> => {
     try {
       const password = await bcrypt.hash(
         studentData.password,
@@ -34,7 +34,7 @@ export class StudentService {
     }
   };
 
-  update = async (id: number, studentData: UserUpdateDTO): Promise<User> => {
+  update = async (id: number, studentData: UserUpdateDTO): Promise<PublicUser> => {
     const existingStudent = await this.studentRepository.getStudentById(id);
     let password = studentData.password;
 
@@ -54,7 +54,7 @@ export class StudentService {
     });
   };
 
-  delete = async (id: number): Promise<User> => {
+  delete = async (id: number): Promise<PublicUser> => {
     await this.studentRepository.deleteStudent(id);
     return this.studentRepository.getStudentById(id);
   };

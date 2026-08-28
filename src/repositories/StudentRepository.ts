@@ -1,5 +1,5 @@
 import type { Pool, QueryResult } from "pg";
-import type { User, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
+import type { PublicUser, User, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
 
 interface UserRow {
   id: number;
@@ -18,7 +18,7 @@ export class StudentRepository {
   constructor(pool: Pool) {
     this.pool = pool;
   }
-  getAllStudents = async (): Promise<User[]> => {
+  getAllStudents = async (): Promise<PublicUser[]> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
@@ -32,7 +32,7 @@ export class StudentRepository {
     }
   };
 
-  getStudentById = async (id: number): Promise<User> => {
+  getStudentById = async (id: number): Promise<PublicUser> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
@@ -47,7 +47,7 @@ export class StudentRepository {
     }
   };
 
-  getStudentByEmail = async (email: string): Promise<User> => {
+  getStudentByEmail = async (email: string): Promise<PublicUser> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
@@ -62,7 +62,7 @@ export class StudentRepository {
     }
   };
 
-  createStudent = async (user: UserCreateDTO): Promise<User> => {
+  createStudent = async (user: UserCreateDTO): Promise<PublicUser> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
@@ -82,7 +82,7 @@ export class StudentRepository {
     }
   };
 
-  updateStudent = async (id: number, user: UserUpdateDTO): Promise<User> => {
+  updateStudent = async (id: number, user: UserUpdateDTO): Promise<PublicUser> => {
     const client = await this.pool.connect();
     try {
       const updates: string[] = [];
@@ -138,12 +138,11 @@ export class StudentRepository {
     }
   };
 
-  private toUser(row: UserRow): User {
+  private toUser(row: UserRow): PublicUser {
     return {
       id: row.id,
       email: row.mail,
       name: `${row.firstname} ${row.lastname}`,
-      password: row.password_hash,
       isActive: row.is_active,
       joinedAt: row.joined_at,
       role: row.role,
