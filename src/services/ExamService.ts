@@ -29,6 +29,31 @@ export class ExamService {
     return this.examRepository.create(examData);
   }
 
+  async update(
+    id: number,
+    examData: Partial<ExamInput>,
+  ): Promise<Exam> {
+    this.validateId(id);
+    const currentExam = await this.getById(id);
+    const mergedData: ExamInput = {
+      courseId: examData.courseId ?? currentExam.course.id,
+      title: examData.title ?? currentExam.title,
+      description:
+        examData.description === undefined
+          ? currentExam.description
+          : examData.description,
+      startsAt: examData.startsAt ?? currentExam.startsAt,
+      endsAt: examData.endsAt ?? currentExam.endsAt,
+    };
+    this.validateExamData(mergedData);
+
+    const updatedExam = await this.examRepository.update(id, examData);
+    if (!updatedExam) {
+      throw new NotFoundError("Exam not found");
+    }
+    return updatedExam;
+  }
+
   private validateExamData(examData: ExamInput): void {
     if (
       !examData ||
