@@ -13,7 +13,7 @@ VALUES (
   'student@examhub.local',
   'Jane',
   'Doe',
-  '$2b$10$U8GpepsLOabi4Ow1qVnNn.QgAx3HLFdkQJsqFmEvOpG7P3QXeYjm',
+  '$2b$10$7qlq5sRVQU2T08UswblAHOi7rBKTFTKuMVWWlGmzlRFHviIsNoJF.',
   true,
   'student'
 );
