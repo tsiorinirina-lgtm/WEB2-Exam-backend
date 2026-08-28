@@ -1,6 +1,20 @@
 import type { Pool } from "pg";
 import type { User } from "../models/User.ts";
 
+function mapRow(row: any) {
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    mail: row.mail,
+    firstname: row.firstname,
+    lastname: row.lastname,
+    password: row.password_hash,
+    isActive: row.is_active,
+    joinedAt: row.joined_at,
+    role: row.role,
+  };
+}
+
 export class UserRepository {
   private pool: Pool;
 
@@ -14,7 +28,7 @@ export class UserRepository {
       const user = await client.query("SELECT * FROM users WHERE id = $1", [
         id,
       ]);
-      return user.rows[0];
+      return mapRow(user.rows[0]);
     } catch (error) {
       throw error;
     } finally {
@@ -28,7 +42,7 @@ export class UserRepository {
       const user = await client.query("SELECT * FROM users WHERE mail = $1", [
         email,
       ]);
-      return user.rows[0];
+      return mapRow(user.rows[0]);
     } catch (error) {
       throw error;
     } finally {
