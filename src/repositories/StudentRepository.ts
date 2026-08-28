@@ -85,16 +85,36 @@ export class StudentRepository {
   updateStudent = async (id: number, user: UserUpdateDTO): Promise<User> => {
     const client = await this.pool.connect();
     try {
+      const updates: string[] = [];
+      const values: unknown[] = [];
+      if (user.email !== undefined) {
+        values.push(user.email);
+        updates.push(`mail = $${values.length}`);
+      }
+      if (user.name !== undefined) {
+        const parts = user.name.trim().split(/\s+/);
+        values.push(parts[0]);
+        updates.push(`firstname = $${values.length}`);
+        values.push(parts.slice(1).join(" "));
+        updates.push(`lastname = $${values.length}`);
+      }
+      if (user.password !== undefined) {
+        values.push(user.password);
+        updates.push(`password_hash = $${values.length}`);
+      }
+      if (user.isActive !== undefined) {
+        values.push(user.isActive);
+        updates.push(`is_active = $${values.length}`);
+      }
+      if (updates.length === 0) {
+        return this.getStudentById(id);
+      }
+      values.push(id, "student");
       const result: QueryResult<UserRow> = await client.query<UserRow>(
-        "UPDATE users SET mail = $1, firstname = $2, lastname = $3, password_hash = $4, is_active = $5 WHERE id = $6 AND role = 'student' RETURNING id, mail, firstname, lastname, password_hash, is_active, joined_at, role",
-        [
-          user.email,
-          user.name.split(" ")[0],
-          user.name.split(" ").slice(1).join(" "),
-          user.password,
-          user.isActive,
-          id,
-        ],
+        `UPDATE users SET ${updates.join(", ")}
+         WHERE id = $${values.length - 1} AND role = $${values.length}
+         RETURNING id, mail, firstname, lastname, password_hash, is_active, joined_at, role`,
+        values,
       );
       return this.toUser(result.rows[0]);
     } catch (error) {
