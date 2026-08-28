@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { QuestionRepository } from '../repositories/QuestionRepository.ts';
 import { ExamRepository } from '../repositories/ExamRepository.ts';
 import type { Question, QuestionInput } from '../models/Question.ts';
@@ -61,7 +62,7 @@ export class QuestionService {
         if (!question) {
             throw new NotFoundError(`Question with id ${questionId} not found`);
         }
-        await this.validateExamForEditing(question.examId);
+        await this.validateExamForEditing(Number(question.examId));
         return question;
     }
 

@@ -4,11 +4,12 @@ import { authenticateUser, authorizeUser } from "../security/AuthMiddleware.ts";
 import { HttpError } from "../errors/HttpError.ts";
 import { InternalServerError } from "../errors/InternalServer.ts";
 import { BadRequestError } from "../errors/BadRequest.ts";
+import { pool } from "../config/database.ts";
 
 export class QuestionController {
   private questionService: QuestionService;
   constructor(app: Express) {
-    this.questionService = new QuestionService();
+    this.questionService = new QuestionService(pool);
     this.setupRoutes(app);
   }
 

@@ -47,7 +47,7 @@ export class MyController {
 
   private getExamDetails = async (req: Request, res: Response) => {
     try {
-      const exam = await this.myService.getExamDetails(req.params.id);
+      const exam = await this.myService.getExamDetails(this.getIdParam(req));
       res.status(200).json(exam);
     } catch (error) {
       const responseError =
@@ -74,7 +74,7 @@ export class MyController {
   private submitAnswer = async (req: Request, res: Response) => {
     try {
       const result = await this.myService.submitAnswer(
-        req.params.id,
+        this.getIdParam(req),
         req.authUser.id,
         req.body,
       );
@@ -87,4 +87,9 @@ export class MyController {
         .json({ message: responseError.message });
     }
   };
+
+  private getIdParam(req: Request): string {
+    const { id } = req.params;
+    return Array.isArray(id) ? id[0] : id;
+  }
 }

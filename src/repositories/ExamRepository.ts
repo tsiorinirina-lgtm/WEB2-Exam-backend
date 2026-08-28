@@ -1,4 +1,5 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool } from 'pg';
+import type { QueryResult } from 'pg';
 import type { Exam, ExamInput, ExamCourseSummary } from '../models/Exam.ts';
 
 export class ExamRepository {

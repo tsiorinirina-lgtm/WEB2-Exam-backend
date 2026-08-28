@@ -19,7 +19,7 @@ export class AuthService {
   private refreshTokenRepository: RefreshTokenRepository;
 
   constructor() {
-    this.userRepository = new UserRepository();
+    this.userRepository = new UserRepository(pool);
     this.refreshTokenRepository = new RefreshTokenRepository();
   }
 
@@ -116,8 +116,8 @@ export class AuthService {
   ): AuthenticatedUser {
     return {
       id: user.id,
-      mail: user.mail,
-      name: `${user.firstname} ${user.lastname}`,
+      mail: user.email,
+      name: user.name,
       isActive: user.isActive,
       createdAt: user.joinedAt,
       role: user.role,
