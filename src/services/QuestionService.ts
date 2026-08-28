@@ -6,12 +6,13 @@ import type { ChoiceInput } from '../models/Choice.ts';
 import { BadRequestError } from '../errors/BadRequest.ts';
 import { NotFoundError } from '../errors/NotFound.ts';
 import { ForbiddenError } from '../errors/Forbidden.ts';
+import { pool as sharedPool } from '../config/database.ts';
 
 export class QuestionService {
     private questionRepository: QuestionRepository;
     private examRepository: ExamRepository;
 
-    constructor(pool: Pool) {
+    constructor(pool: Pool = sharedPool) {
         this.questionRepository = new QuestionRepository(pool);
         this.examRepository = new ExamRepository(pool);
     }

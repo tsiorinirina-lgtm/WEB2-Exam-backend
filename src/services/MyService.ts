@@ -1,4 +1,5 @@
-import { Pool } from "pg";
+import type { Pool } from "pg";
+import { pool as sharedPool } from "../config/database.ts";
 import { AttemptRepository } from "../repositories/AttemptRepository.ts";
 import { QuestionRepository } from "../repositories/QuestionRepository.ts";
 import type {
@@ -18,7 +19,7 @@ export class MyService {
   private attemptRepository: AttemptRepository;
   private questionRepository: QuestionRepository;
 
-  constructor(pool = new Pool()) {
+  constructor(pool: Pool = sharedPool) {
     this.pool = pool;
     this.attemptRepository = new AttemptRepository(pool);
     this.questionRepository = new QuestionRepository(pool);
