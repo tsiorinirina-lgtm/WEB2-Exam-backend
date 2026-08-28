@@ -245,10 +245,9 @@ export class AttemptRepository {
         [examId],
       );
     const examResult: QueryResult<{ id: number; title: string }> =
-      await this.pool.query(
-        "SELECT id, title FROM exams WHERE id = $1",
-        [examId],
-      );
+      await this.pool.query("SELECT id, title FROM exams WHERE id = $1", [
+        examId,
+      ]);
 
     const results: ExamResultLine[] = result.rows.map((row) => ({
       studentId: row.student_id,
