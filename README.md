@@ -75,3 +75,17 @@ JWT_ACCESS_EXPIRATION=1h
 # Bcrypt configuration
 SALT_ROUNDS=10
 ```
+
+### 3. Database Setup & Seed Data
+
+In PostgreSQL, create a new database:
+
+```bash
+psql -U postgres -c "CREATE DATABASE examhub WITH OWNER '<your_username>'"
+```
+
+Run the schema and seed files to construct the database structures and insert test data:
+
+```bash
+psql -d examhub -U <your_username> -f database.sql -f seed.sql
+```
