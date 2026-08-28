@@ -11,3 +11,11 @@ export interface AttemptCreateDTO {
   userId: string;
   score: number;
 }
+
+export interface AttemptRow {
+  id: number;
+  submitted_at: Date;
+  score: number;
+  exam_id: number;
+  user_id: number;
+}

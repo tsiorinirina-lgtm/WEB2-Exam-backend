@@ -21,3 +21,12 @@ export interface MyResultLine {
   totalPoints: number;
   submittedAt: Date;
 }
+
+export interface ResultRow {
+  exam_id: number;
+  title: string;
+  course_code: string;
+  score: number;
+  total_points: number;
+  submitted_at: Date;
+}
