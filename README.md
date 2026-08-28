@@ -51,3 +51,27 @@ git clone https://github.com/tsiorinirina-lgtm/WEB2-Exam-backend.git
 cd WEB2-Exam-backend
 npm install
 ```
+
+### 2. Configure Environment Variables
+
+Copy the `.env.example` file and rename the copy to `.env`:
+
+```env
+# Port number
+PORT=3000
+FRONTEND_URLS=http://localhost:5173
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=examhub
+DB_USER=your_username
+DB_PASSWORD=your_password
+
+# JWT configuration
+JWT_SECRET=replace_with_long_random_string_min_32_chars
+JWT_ACCESS_EXPIRATION=1h
+
+# Bcrypt configuration
+SALT_ROUNDS=10
+```
