@@ -67,4 +67,13 @@ export class QuestionService {
         await this.validateExamForEditing(question.examId);
         return question;
     }
+
+    async getAllQuestions(examId: number, isAdmin: boolean = false): Promise<Question[]> {
+        const exam = await this.examRepository.findById(examId);
+        if (!exam) {
+            throw new NotFoundError(`Exam with id ${examId} not found`);
+        }
+
+        return await this.questionRepository.findByExamId(examId, isAdmin);
+    }
 }
