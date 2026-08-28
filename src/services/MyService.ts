@@ -1,8 +1,14 @@
 import { Pool } from "pg";
 import { AttemptRepository } from "../repositories/AttemptRepository.ts";
 import { QuestionRepository } from "../repositories/QuestionRepository.ts";
-import type { MyExam } from "../models/StudentExam.ts";
-import type { MyExamDetail } from "../models/StudentExam.ts";
+import type {
+  MyExam,
+  MyExamDetail,
+  SubmitAnswerInput,
+  SubmitExamDTO,
+  SubmitExamResult,
+} from "../models/StudentExam.ts";
+import type { MyResultLine } from "../models/Result.ts";
 import { ForbiddenError } from "../errors/Forbidden.ts";
 import { NotFoundError } from "../errors/NotFound.ts";
 import { HttpError } from "../errors/HttpError.ts";
@@ -103,6 +109,56 @@ export class MyService {
         })),
       })),
     };
+  }
+
+  async submitAnswer(
+    examId: string,
+    userId: number,
+    input: SubmitExamDTO,
+  ): Promise<SubmitExamResult> {
+    const id = this.parseId(examId);
+    if (!input || !Array.isArray(input.answers)) {
+      throw new HttpError(400, "Answers must be an array");
+    }
+
+    const exam = await this.pool.query(
+      "SELECT starts_at, ends_at FROM exams WHERE id = $1",
+      [id],
+    );
+    if (exam.rows.length === 0) {
+      throw new NotFoundError("Exam not found");
+    }
+    const now = new Date();
+    if (exam.rows[0].starts_at > now || exam.rows[0].ends_at < now) {
+      throw new ForbiddenError("Exam is not available");
+    }
+
+    if (await this.attemptRepository.findByExamAndUser(String(id), String(userId))) {
+      throw new HttpError(409, "Exam already taken");
+    }
+
+    const answers = input.answers.map((answer): SubmitAnswerInput => {
+      if (
+        !Number.isInteger(answer?.questionId) ||
+        !Number.isInteger(answer?.choiceId)
+      ) {
+        throw new HttpError(400, "Question and choice ids must be integers");
+      }
+      return answer;
+    });
+
+    try {
+      return await this.attemptRepository.submit(id, userId, answers);
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw error;
+      }
+      throw new HttpError(400, "Invalid exam answers");
+    }
+  }
+
+  async getResults(userId: number): Promise<MyResultLine[]> {
+    return this.attemptRepository.findResultsByUser(userId);
   }
 
   private parseId(value: string): number {
