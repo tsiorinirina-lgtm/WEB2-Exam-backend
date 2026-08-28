@@ -36,4 +36,11 @@ export class CourseService {
     }
     return course;
   }
+
+  async deleteCourse(id: number): Promise<void> {
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new BadRequestError("Course id must be a positive integer");
+    }
+    await this.courseRepository.delete(String(id));
+  }
 }
