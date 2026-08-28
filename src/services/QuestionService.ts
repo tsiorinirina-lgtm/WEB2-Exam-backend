@@ -84,4 +84,23 @@ export class QuestionService {
         }
         return question;
     }
+
+    async addQuestion(examId: number, questionData: QuestionInput): Promise<Question> {
+        await this.validateExamForEditing(examId);
+        this.validateQuestion(questionData);
+        const currentCount = await this.questionRepository.getQuestionCount(examId);
+        const MAX_QUESTIONS = 50;
+        if (currentCount >= MAX_QUESTIONS) {
+            throw new BadRequestError(
+                `Cannot add more than ${MAX_QUESTIONS} questions to an exam`
+            );
+        }
+        if (questionData.position === undefined) {
+            questionData.position = currentCount + 1;
+        }
+        if (questionData.position !== undefined && questionData.position <= currentCount) {
+        }
+
+        return await this.questionRepository.create(examId, questionData);
+    }
 }
