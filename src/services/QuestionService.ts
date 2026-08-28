@@ -133,4 +133,9 @@ export class QuestionService {
         }
         return updated;
     }
+
+    async deleteQuestion(id: number): Promise<void> {
+        await this.validateQuestionForEditing(id);
+        await this.questionRepository.delete(id);
+    }
 }
