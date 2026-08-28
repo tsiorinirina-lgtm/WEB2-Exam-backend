@@ -52,7 +52,7 @@ export class QuestionService {
             throw new NotFoundError(`Exam with id ${examId} not found`);
         }
         const now = new Date();
-        if (exam.starts_at <= now) {
+        if (exam.startsAt <= now) {
             throw new ForbiddenError(
                 'Cannot modify questions for an exam that has already started'
             );
