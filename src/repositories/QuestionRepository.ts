@@ -1,7 +1,23 @@
 import { Pool } from 'pg';
 import type { QueryResult } from 'pg';
 import type{ Question, QuestionInput } from '../models/Question.js';
-import type { Choice, ChoiceInput } from '../models/Choice.js';
+import type { Choice } from '../models/Choice.js';
+
+interface QuestionRow {
+    id: number;
+    statement: string;
+    exam_id: number;
+    points: number | string;
+    position: number | string;
+    choices?: Choice[];
+}
+
+interface ChoiceRow {
+    id: number;
+    text: string;
+    is_correct: boolean;
+    question_id: number;
+}
 
 export class QuestionRepository {
     private pool: Pool;
@@ -10,23 +26,23 @@ export class QuestionRepository {
         this.pool = pool;
     }
 
-    private mapQuestionRow(row: any): Question {
+    private mapQuestionRow(row: QuestionRow): Question {
         return {
             id: row.id,
             statement: row.statement,
-            examId: row.exam_id,
-            points: parseInt(row.points),
-            position: parseInt(row.position),
+            examId: String(row.exam_id),
+            points: Number(row.points),
+            position: Number(row.position),
             choices: row.choices || []
         };
     }
 
-    private mapChoiceRow(row: any): Choice {
+    private mapChoiceRow(row: ChoiceRow): Choice {
         return {
-            id: row.id,
+            id: String(row.id),
             text: row.text,
             isCorrect: row.is_correct,
-            questionId: row.question_id,
+            questionId: String(row.question_id),
         };
     }
 
@@ -43,7 +59,7 @@ export class QuestionRepository {
             ORDER BY position ASC, id ASC
         `;
 
-        const questionResult: QueryResult = await this.pool.query(questionQuery, [examId]);
+        const questionResult: QueryResult<QuestionRow> = await this.pool.query(questionQuery, [examId]);
         
         if (questionResult.rows.length === 0) {
             return [];
@@ -61,13 +77,13 @@ export class QuestionRepository {
             ORDER BY id ASC
         `;
 
-        const choiceResult: QueryResult = await this.pool.query(choiceQuery, [questionIds]);
+        const choiceResult: QueryResult<ChoiceRow> = await this.pool.query(choiceQuery, [questionIds]);
 
         const choicesByQuestion = new Map<number, Choice[]>();
         choiceResult.rows.forEach(row => {
             const choice = this.mapChoiceRow(row);
             if (!isAdmin) {
-                delete (choice as any).isCorrect;
+                delete choice.isCorrect;
             }
             
             if (!choicesByQuestion.has(row.question_id)) {
@@ -95,7 +111,7 @@ export class QuestionRepository {
             WHERE id = $1
         `;
 
-        const questionResult: QueryResult = await this.pool.query(questionQuery, [id]);
+        const questionResult: QueryResult<QuestionRow> = await this.pool.query(questionQuery, [id]);
         
         if (questionResult.rows.length === 0) {
             return null;
@@ -114,7 +130,7 @@ export class QuestionRepository {
             ORDER BY id ASC
         `;
 
-        const choiceResult: QueryResult = await this.pool.query(choiceQuery, [id]);
+        const choiceResult: QueryResult<ChoiceRow> = await this.pool.query(choiceQuery, [id]);
         question.choices = choiceResult.rows.map(row => this.mapChoiceRow(row));
 
         return question;
@@ -144,7 +160,7 @@ export class QuestionRepository {
             const points = questionData.points || 1;
             const position = questionData.position || 1;
 
-            const questionResult: QueryResult = await client.query(insertQuestionQuery, [
+            const questionResult: QueryResult<QuestionRow> = await client.query(insertQuestionQuery, [
                 examId,
                 questionData.statement,
                 points,
@@ -161,7 +177,7 @@ export class QuestionRepository {
                     RETURNING id, text, is_correct
                 `;
 
-                const choiceResult: QueryResult = await client.query(insertChoiceQuery, [
+                const choiceResult: QueryResult<ChoiceRow> = await client.query(insertChoiceQuery, [
                     question.id,
                     choiceInput.text,
                     choiceInput.isCorrect
@@ -196,7 +212,7 @@ export class QuestionRepository {
             }
 
             const updates: string[] = [];
-            const values: any[] = [];
+            const values: unknown[] = [];
             let paramIndex = 1;
 
             if (questionData.statement !== undefined) {

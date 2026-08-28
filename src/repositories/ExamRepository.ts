@@ -1,6 +1,31 @@
 import { Pool } from 'pg';
 import type { QueryResult } from 'pg';
 import type { Exam, ExamInput } from '../models/Exam.ts';
+import type { ExamResults, ExamResultLine } from '../models/Result.ts';
+
+type NumericValue = number | string;
+
+interface ExamRow {
+    id: number;
+    title: string;
+    description: string | null;
+    starts_at: Date | string;
+    ends_at: Date | string;
+    course_id: number;
+    course_code: string;
+    course_name: string;
+    question_count: NumericValue;
+    attempt_count: NumericValue;
+}
+
+interface ExamResultRow {
+    total_points: NumericValue;
+    attempt_id: number | null;
+    student_id: number | null;
+    student_name: string | null;
+    score: NumericValue | null;
+    submitted_at: Date | null;
+}
 
 export class ExamRepository {
     private pool: Pool;
@@ -9,7 +34,7 @@ export class ExamRepository {
         this.pool = pool;
     }
 
-    private mapExamRow(row: any): Exam {
+    private mapExamRow(row: ExamRow): Exam {
         return {
             id: row.id,
             title: row.title,
@@ -21,8 +46,8 @@ export class ExamRepository {
                 code: row.course_code,
                 name: row.course_name
             },
-            questionCount: parseInt(row.question_count),
-            attemptCount: parseInt(row.attempt_count)
+            questionCount: Number(row.question_count),
+            attemptCount: Number(row.attempt_count)
         };
     }
 
@@ -54,7 +79,7 @@ export class ExamRepository {
             ORDER BY e.starts_at DESC
         `;
 
-        const result: QueryResult = await this.pool.query(query);
+        const result: QueryResult<ExamRow> = await this.pool.query(query);
         return result.rows.map(row => this.mapExamRow(row));
     }
 
@@ -86,7 +111,7 @@ export class ExamRepository {
             WHERE e.id = $1
         `;
 
-        const result: QueryResult = await this.pool.query(query, [id]);
+        const result: QueryResult<ExamRow> = await this.pool.query(query, [id]);
         
         if (result.rows.length === 0) {
             return null;
@@ -110,7 +135,7 @@ export class ExamRepository {
             examData.endsAt
         ];
 
-        const result: QueryResult = await this.pool.query(query, values);
+        const result: QueryResult<{ id: number }> = await this.pool.query(query, values);
         const id = result.rows[0].id;
 
         const exam = await this.findById(id);
@@ -119,7 +144,7 @@ export class ExamRepository {
 
     async update(id: number, examData: Partial<ExamInput>): Promise<Exam | null> {
         const updates: string[] = [];
-        const values: any[] = [];
+        const values: unknown[] = [];
         let paramIndex = 1;
 
         if (examData.title !== undefined) {
@@ -180,8 +205,8 @@ export class ExamRepository {
             WHERE exam_id = $1
         `;
 
-        const checkResult: QueryResult = await this.pool.query(checkAttemptsQuery, [id]);
-        const attemptCount = parseInt(checkResult.rows[0].attempt_count);
+        const checkResult: QueryResult<{ attempt_count: NumericValue }> = await this.pool.query(checkAttemptsQuery, [id]);
+        const attemptCount = Number(checkResult.rows[0].attempt_count);
 
         if (attemptCount > 0) {
             throw new Error('Cannot delete exam with existing attempts (RG-09)');
@@ -193,11 +218,11 @@ export class ExamRepository {
             RETURNING id
         `;
 
-        const result: QueryResult = await this.pool.query(deleteQuery, [id]);
+        const result: QueryResult<{ id: number }> = await this.pool.query(deleteQuery, [id]);
         return result.rows.length > 0;
     }
 
-    async getResults(examId: number, exam: Exam): Promise<any> {
+    async getResults(examId: number, exam: Exam): Promise<ExamResults> {
         const query = `
             SELECT
                 COALESCE(qp.total_points, 0) as total_points,
@@ -218,8 +243,21 @@ export class ExamRepository {
             ORDER BY a.score DESC, a.submitted_at ASC
         `;
 
-        const result: QueryResult = await this.pool.query(query, [examId]);
-        const attempts = result.rows.filter(row => row.attempt_id !== null);
+        const result: QueryResult<ExamResultRow> = await this.pool.query(query, [examId]);
+        const attempts = result.rows.filter(
+            (row): row is ExamResultRow & {
+                attempt_id: number;
+                student_id: number;
+                student_name: string;
+                score: NumericValue;
+                submitted_at: Date;
+            } =>
+                row.attempt_id !== null &&
+                row.student_id !== null &&
+                row.student_name !== null &&
+                row.score !== null &&
+                row.submitted_at !== null,
+        );
 
         let average = null;
         if (attempts.length > 0) {
@@ -229,10 +267,10 @@ export class ExamRepository {
 
         return {
             exam: { id: exam.id, title: exam.title },
-            totalPoints: parseInt(result.rows[0]?.total_points ?? 0),
+            totalPoints: Number(result.rows[0]?.total_points ?? 0),
             average,
             attemptCount: attempts.length,
-            results: attempts.map(row => ({
+            results: attempts.map<ExamResultLine>(row => ({
                 studentId: row.student_id,
                 name: row.student_name,
                 score: Number(row.score),
@@ -248,8 +286,8 @@ export class ExamRepository {
             WHERE exam_id = $1
         `;
 
-        const result: QueryResult = await this.pool.query(query, [examId]);
-        return parseInt(result.rows[0].count);
+        const result: QueryResult<{ count: NumericValue }> = await this.pool.query(query, [examId]);
+        return Number(result.rows[0].count);
     }
 
     async getQuestionCount(examId: number): Promise<number> {
@@ -259,8 +297,8 @@ export class ExamRepository {
             WHERE exam_id = $1
         `;
 
-        const result: QueryResult = await this.pool.query(query, [examId]);
-        return parseInt(result.rows[0].count);
+        const result: QueryResult<{ count: NumericValue }> = await this.pool.query(query, [examId]);
+        return Number(result.rows[0].count);
     }
 
     async exists(id: number): Promise<boolean> {
@@ -270,7 +308,7 @@ export class ExamRepository {
             ) as exists
         `;
 
-        const result: QueryResult = await this.pool.query(query, [id]);
+        const result: QueryResult<{ exists: boolean }> = await this.pool.query(query, [id]);
         return result.rows[0].exists;
     }
 
@@ -303,7 +341,7 @@ export class ExamRepository {
             ORDER BY e.starts_at DESC
         `;
 
-        const result: QueryResult = await this.pool.query(query, [courseId]);
+        const result: QueryResult<ExamRow> = await this.pool.query(query, [courseId]);
         return result.rows.map(row => this.mapExamRow(row));
     }
 }

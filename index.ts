@@ -40,11 +40,11 @@ new CourseController(app);
 
 new ExamController(app);
 new StudentController(app);
-app.get("/ping", (req: Request, res: Response) => {
+app.get("/ping", (_req: Request, res: Response) => {
   res.send("pong");
 });
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.send("App is running");
 });
 

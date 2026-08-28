@@ -6,6 +6,7 @@ import type {
   MyExam,
   MyExamDetail,
   SubmitAnswerInput,
+  SubmitAnswerPayload,
   SubmitExamDTO,
   SubmitExamResult,
 } from "../models/StudentExam.ts";
@@ -138,10 +139,15 @@ export class MyService {
       throw new HttpError(409, "Exam already taken");
     }
 
-    const answers = input.answers.map((answer: any): SubmitAnswerInput => {
+    const answers = input.answers.map((answer: SubmitAnswerPayload): SubmitAnswerInput => {
       const questionId = answer?.question_id ?? answer?.questionId;
       const choiceId = answer?.choice_id ?? answer?.choiceId;
-      if (!Number.isInteger(questionId) || !Number.isInteger(choiceId)) {
+      if (
+        typeof questionId !== "number" ||
+        !Number.isInteger(questionId) ||
+        typeof choiceId !== "number" ||
+        !Number.isInteger(choiceId)
+      ) {
         throw new HttpError(400, "Question and choice ids must be integers");
       }
       return { questionId, choiceId };

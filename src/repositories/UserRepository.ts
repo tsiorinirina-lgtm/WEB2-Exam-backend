@@ -1,8 +1,18 @@
 import type { Pool } from "pg";
 import type { User } from "../models/User.ts";
 
-function mapRow(row: any) {
-  if (!row) return undefined;
+interface UserRow {
+  id: number;
+  mail: string;
+  firstname: string;
+  lastname: string;
+  password_hash: string;
+  is_active: boolean;
+  joined_at: Date;
+  role: User["role"];
+}
+
+function mapRow(row: UserRow): User {
   return {
     id: row.id,
     email: row.mail,
@@ -24,10 +34,13 @@ export class UserRepository {
   findById = async (id: number): Promise<User> => {
     const client = await this.pool.connect();
     try {
-      const user = await client.query("SELECT * FROM users WHERE id = $1", [
-        id,
-      ]);
-      return mapRow(user.rows[0]);
+      const result = await client.query<UserRow>(
+        `SELECT id, mail, firstname, lastname, password_hash,
+                is_active, joined_at, role
+         FROM users WHERE id = $1`,
+        [id],
+      );
+      return mapRow(result.rows[0]);
     } catch (error) {
       throw error;
     } finally {
@@ -38,10 +51,13 @@ export class UserRepository {
   findByMail = async (email: string): Promise<User> => {
     const client = await this.pool.connect();
     try {
-      const user = await client.query("SELECT * FROM users WHERE mail = $1", [
-        email,
-      ]);
-      return mapRow(user.rows[0]);
+      const result = await client.query<UserRow>(
+        `SELECT id, mail, firstname, lastname, password_hash,
+                is_active, joined_at, role
+         FROM users WHERE mail = $1`,
+        [email],
+      );
+      return mapRow(result.rows[0]);
     } catch (error) {
       throw error;
     } finally {

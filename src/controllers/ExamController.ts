@@ -37,7 +37,7 @@ export class ExamController {
         });
     }
 
-    private async getAll (res: Response, req: Request) {
+    private async getAll (res: Response, _req: Request) {
         try {
             const exams = await this.examService.getAll();
             res.status(200).json(exams);

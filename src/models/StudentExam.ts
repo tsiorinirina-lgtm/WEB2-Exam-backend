@@ -30,8 +30,15 @@ export interface SubmitAnswerInput {
   choiceId: number;
 }
 
+export interface SubmitAnswerPayload {
+  questionId?: unknown;
+  choiceId?: unknown;
+  question_id?: unknown;
+  choice_id?: unknown;
+}
+
 export interface SubmitExamDTO {
-  answers: SubmitAnswerInput[];
+  answers: SubmitAnswerPayload[];
 }
 
 export interface CorrectionLine {
