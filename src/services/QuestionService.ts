@@ -76,4 +76,12 @@ export class QuestionService {
 
         return await this.questionRepository.findByExamId(examId, isAdmin);
     }
+
+    async getQuestionById(id: number): Promise<Question> {
+        const question = await this.questionRepository.findById(id);
+        if (!question) {
+            throw new NotFoundError(`Question with id ${id} not found`);
+        }
+        return question;
+    }
 }
