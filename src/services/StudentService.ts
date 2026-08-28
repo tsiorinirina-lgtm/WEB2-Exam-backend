@@ -53,4 +53,9 @@ export class StudentService {
       isActive: studentData.isActive ?? existingStudent.isActive,
     });
   };
+
+  delete = async (id: number): Promise<User> => {
+    await this.studentRepository.deleteStudent(id);
+    return this.studentRepository.getStudentById(id);
+  };
 }
