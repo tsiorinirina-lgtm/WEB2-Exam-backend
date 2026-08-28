@@ -8,6 +8,10 @@ import "dotenv/config";
 import { AuthController } from "./src/controllers/AuthController.ts";
 import { MyController } from "./src/controllers/MyController.ts";
 import { StudentController } from "./src/controllers/StudentController.ts";
+import {
+  camelCaseRequestBody,
+  snakeCaseResponseBody,
+} from "./src/middlewares/CaseConversionMiddleware.ts";
 const app: Express = express();
 const allowedOrigins = (process.env.FRONTEND_URLS ??
   "http://localhost:5173")
@@ -24,6 +28,8 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(camelCaseRequestBody);
+app.use(snakeCaseResponseBody);
 new AuthController(app);
 new QuestionController(app);
 new MyController(app);
