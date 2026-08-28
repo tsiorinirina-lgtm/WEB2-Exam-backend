@@ -159,4 +159,25 @@ export class QuestionService {
         }
         return await this.questionRepository.getTotalPoints(examId);
     }
+
+    async reorderQuestions(examId: number, questionIds: number[]): Promise<void> {
+        await this.validateExamForEditing(examId);
+        const questions = await this.questionRepository.findByExamId(examId, true);
+        const existingIds = questions.map(q => q.id);
+        for (const id of questionIds) {
+            if (!existingIds.includes(id)) {
+                throw new BadRequestError(
+                    `Question with id ${id} does not belong to exam ${examId}`
+                );
+            }
+        }
+        if (questionIds.length !== existingIds.length) {
+            throw new BadRequestError(
+                'Must include all questions when reordering'
+            );
+        }
+        for (let i = 0; i < questionIds.length; i++) {
+            await this.questionRepository.update(questionIds[i], { position: i + 1 });
+        }
+    }
 }
