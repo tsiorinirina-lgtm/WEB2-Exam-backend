@@ -35,10 +35,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedError("Invalid credentials");
     }
-    const valid = await bcrypt.compare(
-      credentials.password,
-      user.password_hash,
-    );
+    const valid = await bcrypt.compare(credentials.password, user.password);
 
     if (!valid) {
       throw new UnauthorizedError("Invalid credentials");
@@ -57,13 +54,13 @@ export class AuthService {
         hashRefreshToken(refreshToken),
         client,
       );
-      if (!stored || stored.expires_at <= new Date()) {
+      if (!stored || stored.expiresAt <= new Date()) {
         await client.query("ROLLBACK");
         throw new UnauthorizedError("Invalid refresh token");
       }
-      if (stored.revoked_at) {
+      if (stored.revokedAt) {
         await this.refreshTokenRepository.revokeFamily(
-          stored.family_id,
+          stored.familyId,
           "refresh token reuse",
           client,
         );
@@ -71,8 +68,8 @@ export class AuthService {
         throw new UnauthorizedError("Refresh token reuse detected");
       }
 
-      const user = await this.userRepository.findById(stored.user_id);
-      if (!user || !user.is_active) {
+      const user = await this.userRepository.findById(stored.userId);
+      if (!user || !user.isActive) {
         await client.query("ROLLBACK");
         throw new UnauthorizedError("Account disabled");
       }
@@ -81,7 +78,7 @@ export class AuthService {
       const next = await this.refreshTokenRepository.insert(
         hashRefreshToken(nextRefreshToken),
         user.id,
-        stored.family_id,
+        stored.familyId,
         this.refreshExpiry(),
         client,
       );
@@ -128,8 +125,8 @@ export class AuthService {
       id: user.id,
       mail: user.mail,
       name: `${user.firstname} ${user.lastname}`,
-      is_active: user.is_active,
-      created_at: user.joined_at,
+      isActive: user.isActive,
+      createdAt: user.joinedAt,
       role: user.role,
     };
   }

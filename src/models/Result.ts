@@ -1,23 +1,32 @@
 export interface ExamResultLine {
-    student_id: number;
-    name: string;
-    score: number;
-    submitted_at: Date;
+  studentId: number;
+  name: string;
+  score: number;
+  submittedAt: Date;
 }
 
 export interface ExamResults {
-    exam: { id: number; title: string };
-    total_points: number;
-    average: number | null;
-    attempt_count: number;
-    results: ExamResultLine[];
+  exam: { id: number; title: string };
+  totalPoints: number;
+  average: number | null;
+  attemptCount: number;
+  results: ExamResultLine[];
 }
 
 export interface MyResultLine {
-    exam_id: number;
-    title: string;
-    course_code: string;
-    score: number;
-    total_points: number;
-    submitted_at: Date;
+  examId: number;
+  title: string;
+  courseCode: string;
+  score: number;
+  totalPoints: number;
+  submittedAt: Date;
+}
+
+export interface ResultRow {
+  exam_id: number;
+  title: string;
+  course_code: string;
+  score: number;
+  total_points: number;
+  submitted_at: Date;
 }
