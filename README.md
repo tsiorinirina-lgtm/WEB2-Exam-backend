@@ -32,7 +32,7 @@ backend/
 ├── package-lock.json    
 ├── package.json   
 └── tsconfig.json  
-
+```
 ## Prerequisites
 
 Before getting started, make sure you have the following installed on your machine:
@@ -46,7 +46,7 @@ Before getting started, make sure you have the following installed on your machi
 
 Clone the project repository and install all required Node.js dependencies:
 
-```bash
+``` bash
 git clone https://github.com/tsiorinirina-lgtm/WEB2-Exam-backend.git
 cd WEB2-Exam-backend
 npm install
@@ -56,7 +56,7 @@ npm install
 
 Copy the `.env.example` file and rename the copy to `.env`:
 
-```env
+``` env
 # Port number
 PORT=3000
 FRONTEND_URLS=http://localhost:5173
@@ -80,17 +80,17 @@ SALT_ROUNDS=10
 
 In PostgreSQL, create a new database:
 
-```bash
+``` bash
 psql -U postgres -c "CREATE DATABASE examhub WITH OWNER '<your_username>'"
 ```
 
 Run the schema and seed files to construct the database structures and insert test data:
 
-```bash
+``` bash
 psql -d examhub -U <your_username> -f database.sql -f seed.sql
 ```
 
 ### 4. Run the Development Server
-```bash
+``` bash
 npm run dev
 ```
