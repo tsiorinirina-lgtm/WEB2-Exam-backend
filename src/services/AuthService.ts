@@ -119,7 +119,7 @@ export class AuthService {
       mail: user.email,
       name: user.name,
       isActive: user.isActive,
-      createdAt: user.joinedAt,
+      createdAt: user.createdAt,
       role: user.role,
     };
   }
