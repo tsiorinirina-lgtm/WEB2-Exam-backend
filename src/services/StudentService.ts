@@ -1,6 +1,7 @@
+import bcrypt from "bcrypt";
 import { StudentRepository } from "../repositories/StudentRepository.ts";
 import { pool } from "../config/database.ts";
-import type { User } from "../models/User.ts";
+import type { User, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
 
 export class StudentService {
   private studentRepository: StudentRepository;
@@ -17,9 +18,17 @@ export class StudentService {
     }
   };
 
-  create = async (studentData: User): Promise<User> => {
+  create = async (studentData: UserCreateDTO): Promise<User> => {
     try {
-      return await this.studentRepository.createStudent(studentData);
+      const password = await bcrypt.hash(
+        studentData.password,
+        Number(process.env.SALT_ROUNDS ?? 10),
+      );
+      return await this.studentRepository.createStudent({
+        ...studentData,
+        password,
+        role: "student",
+      });
     } catch (error) {
       throw error;
     }
