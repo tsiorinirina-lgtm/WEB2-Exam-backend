@@ -197,46 +197,42 @@ export class ExamRepository {
         return result.rows.length > 0;
     }
 
-    async getResults(examId: number): Promise<any> {
+    async getResults(examId: number, exam: Exam): Promise<any> {
         const query = `
             SELECT
+                COALESCE(qp.total_points, 0) as total_points,
                 a.id as attempt_id,
                 u.id as student_id,
                 u.firstname || ' ' || u.lastname as student_name,
-                u.mail as student_email,
                 a.score,
-                a.submitted_at,
-                (
-                    SELECT SUM(q.points)
-                    FROM questions q
-                    WHERE q.exam_id = $1
-                ) as total_points
-            FROM attempts a
-            JOIN users u ON a.user_id = u.id
-            WHERE a.exam_id = $1
+                a.submitted_at
+            FROM exams e
+            LEFT JOIN (
+                SELECT exam_id, SUM(points) as total_points
+                FROM questions
+                GROUP BY exam_id
+            ) qp ON qp.exam_id = e.id
+            LEFT JOIN attempts a ON a.exam_id = e.id
+            LEFT JOIN users u ON u.id = a.user_id
+            WHERE e.id = $1
             ORDER BY a.score DESC, a.submitted_at ASC
         `;
 
         const result: QueryResult = await this.pool.query(query, [examId]);
-        const exam = await this.findById(examId);
-
-        const totalPointsResult: QueryResult = await this.pool.query(
-            `SELECT COALESCE(SUM(points), 0) as total_points FROM questions WHERE exam_id = $1`,
-            [examId]
-        );
+        const attempts = result.rows.filter(row => row.attempt_id !== null);
 
         let average = null;
-        if (result.rows.length > 0) {
-            const totalScore = result.rows.reduce((sum, row) => sum + Number(row.score), 0);
-            average = Math.round((totalScore / result.rows.length) * 100) / 100;
+        if (attempts.length > 0) {
+            const totalScore = attempts.reduce((sum, row) => sum + Number(row.score), 0);
+            average = Math.round((totalScore / attempts.length) * 100) / 100;
         }
 
         return {
-            exam: exam ? { id: exam.id, title: exam.title } : null,
-            totalPoints: parseInt(totalPointsResult.rows[0].total_points),
+            exam: { id: exam.id, title: exam.title },
+            totalPoints: parseInt(result.rows[0]?.total_points ?? 0),
             average,
-            attemptCount: result.rows.length,
-            results: result.rows.map(row => ({
+            attemptCount: attempts.length,
+            results: attempts.map(row => ({
                 studentId: row.student_id,
                 name: row.student_name,
                 score: Number(row.score),
