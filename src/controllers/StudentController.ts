@@ -1,7 +1,4 @@
 import type { Request, Response, Express } from 'express';
-import type { User } from '../models/User.ts';
-import { BadRequestError } from '../errors/BadRequest.ts';
-import { NotFoundError } from '../errors/NotFound.ts';
 import { InternalServerError } from '../errors/InternalServer.ts';
 import { HttpError } from '../errors/HttpError.ts';
 import { StudentService } from "../services/StudentService.ts";
