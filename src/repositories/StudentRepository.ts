@@ -1,5 +1,5 @@
 import type { Pool, QueryResult } from "pg";
-import type { User } from "../models/User.ts";
+import type { User, UserCreateDTO, UserUpdateDTO } from "../models/User.ts";
 
 interface UserRow {
   id: number;
@@ -62,7 +62,7 @@ export class StudentRepository {
     }
   };
 
-  createStudent = async (user: User): Promise<User> => {
+  createStudent = async (user: UserCreateDTO): Promise<User> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
@@ -82,7 +82,7 @@ export class StudentRepository {
     }
   };
 
-  updateStudent = async (id: number, user: User): Promise<User> => {
+  updateStudent = async (id: number, user: UserUpdateDTO): Promise<User> => {
     const client = await this.pool.connect();
     try {
       const result: QueryResult<UserRow> = await client.query<UserRow>(
