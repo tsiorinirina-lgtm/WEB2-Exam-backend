@@ -23,7 +23,12 @@ export class AuthController {
         this.login(req, res, next);
       },
     );
-    app.post("/api/auth/refresh",(req: Request, res: Response, next: NextFunction) => {this.refresh(req, res, next)})
+    app.post(
+      "/api/auth/refresh",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.refresh(req, res, next);
+      },
+    );
   };
 
   private login = async (
@@ -45,8 +50,8 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 7*24*60*60*1000,
-      })
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
       res.status(200).json({
         token: authentication.accessToken,
         user: {
@@ -64,21 +69,33 @@ export class AuthController {
     }
   };
 
-private refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
-    if (!refreshToken) {
-      const error = new UnauthorizedError("No refresh token in your request");
-      res.status(error.statusCode).json({message : error.message});
-    }
-    const result = await this.authService.refresh(refreshToken);
-       res.cookie("refreshToken", result.refreshToken, {
+  private refresh = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
+      if (!refreshToken) {
+        const error = new UnauthorizedError("No refresh token in your request");
+        res.status(error.statusCode).json({ message: error.message });
+      }
+      const result = await this.authService.refresh(refreshToken);
+      res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 7*24*60*60*1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-      res.status(200).json({accessToken: result.accessToken, user: result.user});
-  }
-}
+      res
+        .status(200)
+        .json({ accessToken: result.accessToken, user: result.user });
+    } catch (error) {
+      if (error instanceof HttpError) {
+        res.status(error.statusCode).json({ message: error.message });
+        return;
+      }
+      next(error);
+    }
+  };
 }
